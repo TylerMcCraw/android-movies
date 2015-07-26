@@ -2,7 +2,43 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+        <item name="actionBarStyle">@style/AppTheme.ActionBar</item>
+        <item name="colorPrimary">@color/background</item>
+        <item name="colorPrimaryDark">@color/statusbar</item>
+        <item name="android:textViewStyle">@style/AppTheme.TextStyle</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Title</item>
+    </style>
+
+    <!-- ActionBar Style -->
+    <style name="AppTheme.ActionBar" parent="Widget.AppCompat.ActionBar">
+        <item name="background">@color/actionbar</item>
+        <item name="titleTextStyle">@style/AppTheme.ActionBar.Text</item>
+        <item name="actionMenuTextColor">@color/white</item>
+    </style>
+
+    <!-- ActionBar Text Style -->
+    <style name="AppTheme.ActionBar.Text" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <!-- CardView Style -->
+    <style name="CardViewStyle" parent="CardView">
+        <item name="cardCornerRadius">4dp</item>
+        <item name="cardElevation">4dp</item>
+        <item name="cardBackgroundColor">@color/cardview_light_background</item>
+    </style>
+
+    <!-- Colors -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="actionbar">#8BC34A</color>
+    <color name="statusbar">#689F38</color>
+    <color name="background">#8BC34A</color>
+    <color name="swiperefresh">#8BC34A</color>
+
+    <!-- Fonts -->
+    <style name="AppTheme.TextStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">sans-serif-condensed</item>
     </style>
 
 </resources>
