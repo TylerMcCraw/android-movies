@@ -1,8 +1,10 @@
 package com.w3bshark.monolith;
 
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -39,7 +41,7 @@ public class MainActivityFragment extends Fragment {
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
-        mLayoutManager = new LinearLayoutManager(this.getActivity());
+        mLayoutManager = new GridLayoutManager(this.getActivity(), 2);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         initializeData();
@@ -62,6 +64,16 @@ public class MainActivityFragment extends Fragment {
         movies = new ArrayList<>();
 
         MainActivity mainActivity = (MainActivity) getActivity();
+        Movie temp = new Movie();
+        movies.add(temp);
+        movies.add(temp);
+        movies.add(temp);
+        movies.add(temp);
+        movies.add(temp);
+        movies.add(temp);
+        movies.add(temp);
+        movies.add(temp);
+
 //        TenDayForecastHandler tenDayForecastHandler = new TenDayForecastHandler(getActivity().getApplicationContext())
 //        {
 //            @Override
@@ -80,6 +92,8 @@ public class MainActivityFragment extends Fragment {
 //            }
 //        };
 //        tenDayForecastHandler.execute(location);
+        initializeAdapter();
+
     }
 
     private void initializeAdapter(){
