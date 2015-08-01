@@ -1,5 +1,7 @@
 package com.w3bshark.monolith.rest;
 
+import android.util.Log;
+
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.w3bshark.monolith.Movie;
 
@@ -15,6 +17,8 @@ import java.util.ArrayList;
  */
 public class PopularMoviesHandler extends JsonHttpResponseHandler {
 
+    private static final String LOG_TAG = PopularMoviesHandler.class.getSimpleName();
+
     // This resolves to the relative URL below to sort movies by popularity in descending order
     // discover/movie?api_key=b135eb044beeebb67df1a9b6ee3709cf&sort_by=popularity.desc"
     public static final String POPULARMOVIES_POPULARITY_DESC =
@@ -23,6 +27,9 @@ public class PopularMoviesHandler extends JsonHttpResponseHandler {
                 .concat(TMDBRestClient.TMDB_APIKEY).concat("&").concat(TMDBRestClient.SORT_BY)
                 .concat("=").concat(TMDBRestClient.SORT_POPULARITY)
                 .concat(TMDBRestClient.SORT_DESC);
+
+    public static final String POPULARMOVIES_PAGE = "page";
+    public static final String POPULARMOVIES_ADDPAGE =  "&".concat(POPULARMOVIES_PAGE).concat("=");
 
     private JSONObject response;
     private ArrayList<Movie> movies;
@@ -56,13 +63,17 @@ public class PopularMoviesHandler extends JsonHttpResponseHandler {
     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
         // Response failed :(
         try {
+            if (errorResponse == null) {
+                return;
+            }
             errorMessage = errorResponse.getString("status_message");
+            Log.e(LOG_TAG, errorMessage);
         } catch (JSONException e) {
             // TODO: Handle exception appropriately
         }
     }
 
-    public ArrayList<Movie> getMovies() {
+    public ArrayList<Movie> parseMovies() {
         return movies;
     }
 }

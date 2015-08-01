@@ -25,10 +25,13 @@ public class MainActivityFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerAdapter mRecyclerAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private GridLayoutManager mLayoutManager;
     private ArrayList<Movie> movies;
     private View mCoordinatorLayoutView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    int pastVisibleItems, visibleItemCount, totalItemCount;
+    int visiblePages;
+    private boolean viewIsLoading = true;
 
     public MainActivityFragment() {
     }
@@ -45,15 +48,69 @@ public class MainActivityFragment extends Fragment {
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
+        // Display only 2 columns
+        // TODO: Display more columns if user has a larger device (i.e. a tablet)
         mLayoutManager = new GridLayoutManager(this.getActivity(), 2);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         initializeData();
 
+        // Initially we'll start with 1 page of movies (paging is a TMDB term)
+        // Then, we'll slowly roll in more and more pages as needed by user
+        // http://docs.themoviedb.apiary.io/#reference/discover/discovermovie
+        visiblePages = 1;
+        // Handle user continuously scrolling
+        // Pages of new movies will be added in as user scrolls
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                visibleItemCount = mLayoutManager.getChildCount();
+                totalItemCount = mLayoutManager.getItemCount();
+                pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition();
+
+                if (viewIsLoading) {
+                    // We'll want to add in new movies before the user can hit a "wall"
+                    // This will allow users to continuously scroll without having to stop
+                    // and wait for the app to GET new movies
+                    if ((visibleItemCount + pastVisibleItems) >= (totalItemCount)) {
+                        viewIsLoading = false;
+                        TMDBRestClient.get( PopularMoviesHandler.POPULARMOVIES_POPULARITY_DESC.concat(PopularMoviesHandler.POPULARMOVIES_ADDPAGE).concat(Integer.toString(++visiblePages)),
+                                null, new PopularMoviesHandler() {
+                                    @Override
+                                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                        super.onSuccess(statusCode, headers, response);
+                                        if (this.parseMovies() != null && !this.parseMovies().isEmpty()) {
+                                            // It is required to call addAll because this causes the
+                                            // recycleradapter to realize that there is new data and to refresh the view
+                                            movies.addAll(this.parseMovies());
+                                        }
+                                        if (mRecyclerAdapter == null) {
+                                            initializeAdapter();
+                                        } else {
+                                            mRecyclerAdapter.notifyDataSetChanged();
+                                        }
+                                        mSwipeRefreshLayout.setRefreshing(false);
+
+                                        viewIsLoading = true;
+                                    }
+                                });
+                    }
+                    // TMDB has a limit on pages that can be requested
+                    // This limit is 1000, so we should stop the user from loading more than this
+                    if (visiblePages >= 1000) {
+                        viewIsLoading = false;
+                    }
+                }
+            }
+        });
+
+        // Handle user pull-down to refresh
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.main_swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                // Set visible pages back to 1, because we'll be reloading all pages
+                visiblePages = 1;
                 initializeData();
                 initializeAdapter();
                 mRecyclerView.refreshDrawableState();
@@ -75,11 +132,11 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 super.onSuccess(statusCode, headers, response);
-                if (this.getMovies() != null && !this.getMovies().isEmpty()) {
+                if (this.parseMovies() != null && !this.parseMovies().isEmpty()) {
                     movies.clear();
                     // It is required to call addAll because this causes the
                     // recycleradapter to realize that there is new data and to refresh the view
-                    movies.addAll(this.getMovies());
+                    movies.addAll(this.parseMovies());
                 }
                 if (mRecyclerAdapter == null) {
                     initializeAdapter();
