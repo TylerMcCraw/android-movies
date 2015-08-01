@@ -91,7 +91,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MovieV
     @Override
     public void onBindViewHolder(MovieViewHolder movieViewHolder, int i) {
         movieViewHolder.cv.setTag(movies.get(i).getTitle());
-        Picasso.with(context).load("http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg").into(movieViewHolder.appPhoto);
+        Picasso.with(context).load("http://image.tmdb.org/t/p/w185".concat(movies.get(i).getImageCode())).into(movieViewHolder.appPhoto);
         movieViewHolder.appPhoto.setContentDescription(movies.get(i).getDescription());
 //        movieViewHolder.appPhoto.setImageResource(
 //                Util.getFeaturedWeatherIcon(movies.get(i).getIconCode())

@@ -11,13 +11,17 @@ public class Movie implements Parcelable{
     String title;
     String description;
     String imageCode;
+    Double voteAverage;
+    String releaseDate;
 
-    Movie() {}
+    public Movie() {}
 
     Movie(Parcel in) {
         this.title = in.readString();
         this.description = in.readString();
         this.imageCode = in.readString();
+        this.voteAverage = in.readDouble();
+        this.releaseDate = in.readString();
     }
 
     @Override
@@ -66,5 +70,21 @@ public class Movie implements Parcelable{
 
     public void setImageCode(String imageCode) {
         this.imageCode = imageCode;
+    }
+
+    public Double getVoteAverage() {
+        return voteAverage;
+    }
+
+    public void setVoteAverage(Double voteAverage) {
+        this.voteAverage = voteAverage;
+    }
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
     }
 }

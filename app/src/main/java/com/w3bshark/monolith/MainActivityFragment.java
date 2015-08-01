@@ -1,15 +1,19 @@
 package com.w3bshark.monolith;
 
 import android.os.Bundle;
-import android.os.Parcel;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.w3bshark.monolith.rest.PopularMoviesHandler;
+import com.w3bshark.monolith.rest.TMDBRestClient;
+
+import org.apache.http.Header;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -61,39 +65,36 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void initializeData(){
-        movies = new ArrayList<>();
+        if (movies == null) {
+            movies = new ArrayList<>();
+        }
 
-        MainActivity mainActivity = (MainActivity) getActivity();
-        Movie temp = new Movie();
-        movies.add(temp);
-        movies.add(temp);
-        movies.add(temp);
-        movies.add(temp);
-        movies.add(temp);
-        movies.add(temp);
-        movies.add(temp);
-        movies.add(temp);
+//        RequestHandle handle =
+        TMDBRestClient.get( PopularMoviesHandler.POPULARMOVIES_POPULARITY_DESC, null, new PopularMoviesHandler()
+        {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                if (this.getMovies() != null && !this.getMovies().isEmpty()) {
+                    movies.clear();
+                    // It is required to call addAll because this causes the
+                    // recycleradapter to realize that there is new data and to refresh the view
+                    movies.addAll(this.getMovies());
+                }
+                if (mRecyclerAdapter == null) {
+                    initializeAdapter();
+                }
+                else {
+                    mRecyclerAdapter.notifyDataSetChanged();
+                }
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
 
-//        TenDayForecastHandler tenDayForecastHandler = new TenDayForecastHandler(getActivity().getApplicationContext())
-//        {
-//            @Override
-//            protected void onPostExecute(ArrayList<Day> result) {
-//                if (result != null && !result.isEmpty()) {
-//                    days.clear();
-//                    days.addAll(result);
-//                }
-//                if (mRecyclerAdapter == null) {
-//                    initializeAdapter();
-//                }
-//                else {
-//                    mRecyclerAdapter.notifyDataSetChanged();
-//                }
-//                mSwipeRefreshLayout.setRefreshing(false);
-//            }
-//        };
-//        tenDayForecastHandler.execute(location);
-        initializeAdapter();
+            //TODO: Handle override of onFailure event
+        });
 
+        //TODO: Handle user press of cancel or close of application
+//      handle.cancel(true);
     }
 
     private void initializeAdapter(){
