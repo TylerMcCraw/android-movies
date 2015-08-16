@@ -1,8 +1,18 @@
+<!--
+  ~ Copyright (c) 2015. Tyler McCraw
+  -->
+
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".DetailActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.w3bshark.monolith.DetailActivity">
+    <item android:id="@+id/menu_item_share"
+        android:title="@string/action_share"
+        android:orderInCategory="100"
+        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
+        app:showAsAction="ifRoom" />
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
-        android:orderInCategory="100"
+        android:orderInCategory="101"
         app:showAsAction="never" />
 </menu>

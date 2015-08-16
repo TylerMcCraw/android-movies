@@ -1,10 +1,13 @@
+/*
+ * Copyright (c) 2015. Tyler McCraw
+ */
+
 package com.w3bshark.monolith;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-
 
 public class MainActivity extends AppCompatActivity {
 

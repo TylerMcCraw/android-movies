@@ -1,12 +1,13 @@
+/*
+ * Copyright (c) 2015. Tyler McCraw
+ */
+
 package com.w3bshark.monolith;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by w3bshark on 7/26/2015.
- */
-public class Movie implements Parcelable{
+public class Movie implements Parcelable {
 
     String title;
     String description;
@@ -14,7 +15,8 @@ public class Movie implements Parcelable{
     Double voteAverage;
     String releaseDate;
 
-    public Movie() {}
+    public Movie() {
+    }
 
     Movie(Parcel in) {
         this.title = in.readString();
@@ -34,6 +36,8 @@ public class Movie implements Parcelable{
         dest.writeString(title);
         dest.writeString(description);
         dest.writeString(imageCode);
+        dest.writeDouble(voteAverage);
+        dest.writeString(releaseDate);
     }
 
     public static final Parcelable.Creator<Movie> CREATOR

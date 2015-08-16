@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015. Tyler McCraw
+ */
+
 package com.w3bshark.monolith.rest;
 
 import android.util.Log;
@@ -12,26 +16,19 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-/**
- * Created by w3bshark on 7/26/2015.
- */
 public class PopularMoviesHandler extends JsonHttpResponseHandler {
 
     private static final String LOG_TAG = PopularMoviesHandler.class.getSimpleName();
-
     // This resolves to the relative URL below to sort movies by popularity in descending order
     // discover/movie?api_key=b135eb044beeebb67df1a9b6ee3709cf&sort_by=popularity.desc"
     public static final String POPULARMOVIES_POPULARITY_DESC =
-        TMDBRestClient.DISCOVER.concat("/").concat(TMDBRestClient.DISCOVER_MOVIE)
-                .concat("?").concat(TMDBRestClient.API_KEY).concat("=")
-                .concat(TMDBRestClient.TMDB_APIKEY).concat("&").concat(TMDBRestClient.SORT_BY)
-                .concat("=").concat(TMDBRestClient.SORT_POPULARITY)
-                .concat(TMDBRestClient.SORT_DESC);
-
+            TmdbRestClient.DISCOVER.concat("/").concat(TmdbRestClient.DISCOVER_MOVIE)
+                    .concat("?").concat(TmdbRestClient.API_KEY).concat("=")
+                    .concat(TmdbRestClient.TMDB_APIKEY).concat("&").concat(TmdbRestClient.SORT_BY)
+                    .concat("=").concat(TmdbRestClient.SORT_POPULARITY)
+                    .concat(TmdbRestClient.SORT_DESC);
     public static final String POPULARMOVIES_PAGE = "page";
-    public static final String POPULARMOVIES_ADDPAGE =  "&".concat(POPULARMOVIES_PAGE).concat("=");
-
-    private JSONObject response;
+    public static final String POPULARMOVIES_ADDPAGE = "&".concat(POPULARMOVIES_PAGE).concat("=");
     private ArrayList<Movie> movies;
     private String errorMessage;
 
@@ -53,9 +50,8 @@ public class PopularMoviesHandler extends JsonHttpResponseHandler {
                 movie.setReleaseDate(jsonMovie.getString("release_date"));
                 movies.add(movie);
             }
-        }
-        catch (JSONException e) {
-            // TODO: Handle exception appropriately
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, "JSON Exception");
         }
     }
 
@@ -69,7 +65,7 @@ public class PopularMoviesHandler extends JsonHttpResponseHandler {
             errorMessage = errorResponse.getString("status_message");
             Log.e(LOG_TAG, errorMessage);
         } catch (JSONException e) {
-            // TODO: Handle exception appropriately
+            Log.e(LOG_TAG, "JSON Exception");
         }
     }
 

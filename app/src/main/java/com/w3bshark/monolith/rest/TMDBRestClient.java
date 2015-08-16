@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015. Tyler McCraw
+ */
+
 package com.w3bshark.monolith.rest;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -5,10 +9,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestHandle;
 import com.loopj.android.http.RequestParams;
 
-/**
- * Created by w3bshark on 7/26/2015.
- */
-public class TMDBRestClient {
+public class TmdbRestClient {
 
     // Base URL for all GET/POST calls
     private static final String BASE_URL = "http://api.themoviedb.org/3/";

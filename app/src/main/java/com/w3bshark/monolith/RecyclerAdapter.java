@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015. Tyler McCraw
+ */
+
 package com.w3bshark.monolith;
 
 import android.content.Context;
@@ -12,10 +16,12 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-/**
- * Created by w3bshark on 7/21/2015.
- */
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MovieViewHolder> {
+
+    // Base URL for all images hosted on TMDB
+    private static final String BASE_IMG_URL = "http://image.tmdb.org/t/p/";
+    private static final String IMG_MED_RES = "w342";
+    private static final String IMG_HIGH_RES = "w780";
 
     public static class MovieViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
@@ -23,8 +29,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MovieV
 
         MovieViewHolder(View itemView) {
             super(itemView);
-            cv = (CardView)itemView.findViewById(R.id.cv);
-            appPhoto = (ImageView)itemView.findViewById(R.id.app_photo);
+            cv = (CardView) itemView.findViewById(R.id.cv);
+            appPhoto = (ImageView) itemView.findViewById(R.id.app_photo);
         }
     }
 
@@ -38,65 +44,25 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MovieV
         this.clickListener = clickListener;
     }
 
-//    @Override
-//    public int getItemViewType(int position) {
-//        switch (position) {
-//            case 0:
-//                return 0;
-//            case 1:
-//                return 1;
-//            default:
-//                return 2;
-//        }
-//    }
-
     @Override
     public MovieViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v;
-//        if (i == 0) {
-//            v = LayoutInflater.from(viewGroup.getContext())
-//                    .inflate(R.layout.recycler_item_first_day, viewGroup, false);
-//            //TODO: change the first day to a static view, cardview isn't going to work.
-//            WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-//            Display display = wm.getDefaultDisplay();
-//            Point size = new Point();
-//            display.getSize(size);
-//            int height = size.y;
-//            if (height == 0) {
-//                height = 300;
-//            }
-//            else {
-//                height = height * 2/5;
-//            }
-//            DayViewHolder dvh = new DayViewHolder(v);
-//            dvh.cv.setMinimumHeight(height);
-//            dvh.cv.setCardBackgroundColor(context.getResources().getColor(R.color.background));
-//            TextView dayOfWeek = (TextView)dvh.cv.findViewById(R.id.dayOfWeek);
-//            TextView weatherType = (TextView)dvh.cv.findViewById(R.id.weatherType);
-//            TextView tempMax = (TextView)dvh.cv.findViewById(R.id.tempMax);
-//            TextView tempMin = (TextView)dvh.cv.findViewById(R.id.tempMin);
-//            dayOfWeek.setTextColor(context.getResources().getColor(R.color.white));
-//            weatherType.setTextColor(context.getResources().getColor(R.color.white));
-//            tempMax.setTextColor(context.getResources().getColor(R.color.white));
-//            tempMin.setTextColor(context.getResources().getColor(R.color.white));
-//            return new DayViewHolder(v);
-//        }
-//        else {
-            v = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.recycler_item, viewGroup, false);
-            return new MovieViewHolder(v);
-//        }
+        View v = LayoutInflater.from(viewGroup.getContext())
+                .inflate(R.layout.recycler_item, viewGroup, false);
+        return new MovieViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(MovieViewHolder movieViewHolder, int i) {
         movieViewHolder.cv.setTag(movies.get(i).getTitle());
-        Picasso.with(context).load("http://image.tmdb.org/t/p/w185".concat(movies.get(i).getImageCode())).into(movieViewHolder.appPhoto);
+        String imgURL = BASE_IMG_URL;
+        boolean isTablet = context.getResources().getBoolean(R.bool.isTablet);
+        if (isTablet) {
+            imgURL = imgURL.concat(IMG_HIGH_RES);
+        } else {
+            imgURL = imgURL.concat(IMG_MED_RES);
+        }
+        Picasso.with(context).load(imgURL.concat(movies.get(i).getImageCode())).into(movieViewHolder.appPhoto);
         movieViewHolder.appPhoto.setContentDescription(movies.get(i).getDescription());
-//        movieViewHolder.appPhoto.setImageResource(
-//                Util.getFeaturedWeatherIcon(movies.get(i).getIconCode())
-//        );
-
         movieViewHolder.cv.setOnClickListener(clickListener);
     }
 

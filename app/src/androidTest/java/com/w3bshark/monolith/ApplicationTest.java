@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015. Tyler McCraw
+ */
+
 package com.w3bshark.monolith;
 
 import android.app.Application;

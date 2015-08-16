@@ -1,0 +1,7 @@
+<!--
+  ~ Copyright (c) 2015. Tyler McCraw
+  -->
+
+<resources>
+    <bool name="isTablet">false</bool>
+</resources>

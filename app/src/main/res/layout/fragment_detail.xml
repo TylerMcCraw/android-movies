@@ -1,0 +1,108 @@
+<!--
+  ~ Copyright (c) 2015. Tyler McCraw
+  -->
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--TODO: Move dimensions to dimens.xml -->
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:layout_gravity="start"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="vertical">
+
+        <!-- Header: Movie Title -->
+        <LinearLayout
+            android:gravity="center_horizontal"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:minHeight="125dp"
+            android:padding="16dp"
+            android:background="@color/background">
+            <TextView
+                android:fontFamily="sans-serif-condensed"
+                android:id="@+id/detail_movie_title"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:textColor="@color/white"
+                android:textSize="48sp"/>
+        </LinearLayout>
+
+        <!-- Main content: title, release date, movie poster, vote average, and plot synopsis -->
+        <LinearLayout
+            android:gravity="center_horizontal"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <RelativeLayout
+                android:gravity="start"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/detail_poster"
+                    android:layout_width="154dp"
+                    android:layout_height="232dp"
+                    android:scaleType="centerCrop"
+                    android:layout_marginEnd="6dp"
+                    android:layout_marginBottom="24dp"/>
+
+                <TextView
+                    android:id="@+id/detail_rating_textview"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_toEndOf="@+id/detail_poster"
+                    android:fontFamily="sans-serif-light"
+                    android:textSize="96sp" />
+                <TextView
+                    android:id="@+id/detail_rating_total_textview"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:textColor="@color/primary_text_default_material_light"
+                    android:fontFamily="sans-serif-light"
+                    android:textSize="14sp"
+                    android:layout_alignBaseline="@+id/detail_rating_textview"
+                    android:layout_alignBottom="@+id/detail_rating_textview"
+                    android:layout_alignParentEnd="true" />
+
+                <TextView
+                    android:id="@+id/detail_release_date_textview"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_below="@+id/detail_rating_textview"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/primary_text_default_material_light"
+                    android:fontFamily="sans-serif-light"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/detail_description_textview"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_below="@+id/detail_poster"
+                    android:textColor="@color/primary_text_default_material_light"
+                    android:fontFamily="sans-serif-light"
+                    android:textSize="20sp" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_gravity="center"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:orientation="vertical">
+
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
