@@ -83,7 +83,7 @@
                     android:layout_alignParentEnd="true"
                     android:textColor="@color/primary_text_default_material_light"
                     android:fontFamily="sans-serif-light"
-                    android:textSize="24sp" />
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/detail_description_textview"

@@ -51,7 +51,7 @@ public class PopularMoviesHandler extends JsonHttpResponseHandler {
                 movies.add(movie);
             }
         } catch (JSONException e) {
-            Log.e(LOG_TAG, "JSON Exception");
+            Log.e(LOG_TAG, e.getMessage());
         }
     }
 
@@ -65,7 +65,7 @@ public class PopularMoviesHandler extends JsonHttpResponseHandler {
             errorMessage = errorResponse.getString("status_message");
             Log.e(LOG_TAG, errorMessage);
         } catch (JSONException e) {
-            Log.e(LOG_TAG, "JSON Exception");
+            Log.e(LOG_TAG, e.getMessage());
         }
     }
 

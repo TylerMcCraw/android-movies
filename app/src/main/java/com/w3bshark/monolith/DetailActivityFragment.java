@@ -7,6 +7,7 @@ package com.w3bshark.monolith;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +16,15 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class DetailActivityFragment extends Fragment {
 
+    private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     // Base URL for all images hosted on TMDB
     private static final String BASE_IMG_URL = "http://image.tmdb.org/t/p/";
     private static final String IMG_MED_RES = "w185";
@@ -61,7 +69,17 @@ public class DetailActivityFragment extends Fragment {
 
             // Release Date
             TextView releaseDateView = (TextView) detailFragment.findViewById(R.id.detail_release_date_textview);
-            releaseDateView.setText(selectedMovie.getReleaseDate());
+            DateFormat tmdbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            DateFormat displayFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault());
+            Date convertedDate = new Date();
+            try {
+                convertedDate = tmdbFormat.parse(selectedMovie.getReleaseDate());
+            }
+            catch (ParseException e) {
+                Log.e(LOG_TAG, e.getMessage());
+            }
+            String convertedDateStr = displayFormat.format(convertedDate);
+            releaseDateView.setText(convertedDateStr);
 
             // Description
             TextView descriptionView = (TextView) detailFragment.findViewById(R.id.detail_description_textview);
