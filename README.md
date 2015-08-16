@@ -11,6 +11,7 @@ If you would, as a developer, like to use your own TheMovieDatabase API Key, ple
 ## Credits
 
 TheMovieDatabase API: https://www.themoviedb.org/documentation/api
+Android Icons: https://developer.android.com/training/implementing-navigation/nav-drawer.html
 
 ## License
 
