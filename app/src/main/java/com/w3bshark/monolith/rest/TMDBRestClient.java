@@ -21,6 +21,7 @@ public class TmdbRestClient {
     // API key words to be used for relative URL additions
     public static final String SORT_BY = "sort_by";
     public static final String SORT_POPULARITY = "popularity";
+    public static final String SORT_RATING = "vote_average";
     public static final String SORT_DESC = ".desc";
     public static final String DISCOVER = "discover";
     public static final String DISCOVER_MOVIE = "movie";

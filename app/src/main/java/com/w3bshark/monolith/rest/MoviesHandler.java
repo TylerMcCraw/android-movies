@@ -16,19 +16,27 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class PopularMoviesHandler extends JsonHttpResponseHandler {
+public class MoviesHandler extends JsonHttpResponseHandler {
 
-    private static final String LOG_TAG = PopularMoviesHandler.class.getSimpleName();
+    private static final String LOG_TAG = MoviesHandler.class.getSimpleName();
     // This resolves to the relative URL below to sort movies by popularity in descending order
     // discover/movie?api_key=b135eb044beeebb67df1a9b6ee3709cf&sort_by=popularity.desc"
-    public static final String POPULARMOVIES_POPULARITY_DESC =
+    public static final String MOVIES_POPULARITY_DESC =
             TmdbRestClient.DISCOVER.concat("/").concat(TmdbRestClient.DISCOVER_MOVIE)
                     .concat("?").concat(TmdbRestClient.API_KEY).concat("=")
                     .concat(TmdbRestClient.TMDB_APIKEY).concat("&").concat(TmdbRestClient.SORT_BY)
                     .concat("=").concat(TmdbRestClient.SORT_POPULARITY)
                     .concat(TmdbRestClient.SORT_DESC);
-    public static final String POPULARMOVIES_PAGE = "page";
-    public static final String POPULARMOVIES_ADDPAGE = "&".concat(POPULARMOVIES_PAGE).concat("=");
+    // This resolves to the relative URL below to sort movies by popularity in descending order
+    // discover/movie?api_key=b135eb044beeebb67df1a9b6ee3709cf&sort_by=vote_average.desc"
+    public static final String MOVIES_RATING_DESC =
+            TmdbRestClient.DISCOVER.concat("/").concat(TmdbRestClient.DISCOVER_MOVIE)
+                    .concat("?").concat(TmdbRestClient.API_KEY).concat("=")
+                    .concat(TmdbRestClient.TMDB_APIKEY).concat("&").concat(TmdbRestClient.SORT_BY)
+                    .concat("=").concat(TmdbRestClient.SORT_RATING)
+                    .concat(TmdbRestClient.SORT_DESC);
+    public static final String MOVIES_PAGE = "page";
+    public static final String MOVIES_ADDPAGE = "&".concat(MOVIES_PAGE).concat("=");
     private ArrayList<Movie> movies;
     private String errorMessage;
 

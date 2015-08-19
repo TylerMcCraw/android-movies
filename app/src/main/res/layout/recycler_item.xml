@@ -22,11 +22,12 @@
         >
 
         <ImageView
-            android:id="@+id/app_photo"
+            android:id="@+id/poster"
             android:layout_width="185dp"
             android:layout_height="277dp"
             android:scaleType="centerCrop"
             android:layout_centerInParent="true"
+            android:contentDescription="@string/main_poster"
             />
 
     </RelativeLayout>

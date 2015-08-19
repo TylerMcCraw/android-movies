@@ -5,7 +5,9 @@
 package com.w3bshark.monolith;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -14,7 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.w3bshark.monolith.rest.PopularMoviesHandler;
+import com.w3bshark.monolith.rest.MoviesHandler;
 import com.w3bshark.monolith.rest.TmdbRestClient;
 
 import org.apache.http.Header;
@@ -27,11 +29,11 @@ public class MainActivityFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerAdapter mRecyclerAdapter;
     private GridLayoutManager mLayoutManager;
-    private ArrayList<Movie> movies;
     private View mCoordinatorLayoutView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private int pastVisibleItems, visibleItemCount, totalItemCount, visiblePages;
     private boolean viewIsLoading = true;
+    private ArrayList<Movie> movies;
 
     public MainActivityFragment() {
     }
@@ -51,13 +53,21 @@ public class MainActivityFragment extends Fragment {
         // Display only 2 columns if phone; 3 columns if tablet
         boolean isTablet = getResources().getBoolean(R.bool.isTablet);
         if (isTablet) {
-            mLayoutManager = new GridLayoutManager(this.getActivity(), 3);
+            mLayoutManager = new GridLayoutManager(getActivity(), 3);
         } else {
-            mLayoutManager = new GridLayoutManager(this.getActivity(), 2);
+            mLayoutManager = new GridLayoutManager(getActivity(), 2);
         }
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        initializeData();
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        String defValPref = "";
+        String userSortPref = settings.getString(MainActivity.PREF_SORT, defValPref);
+        if (userSortPref.isEmpty() || userSortPref.equals(MainActivity.SortType.MostPopular.getSortType())) {
+            initializeData(MainActivity.SortType.MostPopular);
+        }
+        else {
+            initializeData(MainActivity.SortType.HighestRated);
+        }
 
         // Initially we'll start with 1 page of movies (paging is a TMDB term)
         // Then, we'll slowly roll in more and more pages as needed by user
@@ -78,10 +88,21 @@ public class MainActivityFragment extends Fragment {
                     // and wait for the app to GET new movies
                     if ((visibleItemCount + pastVisibleItems) >= (totalItemCount)) {
                         viewIsLoading = false;
-                        String url = PopularMoviesHandler.POPULARMOVIES_POPULARITY_DESC
-                                .concat(PopularMoviesHandler.POPULARMOVIES_ADDPAGE)
+
+                        String sortUrl = "";
+                        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+                        String defValPref = "";
+                        String userSortPref = settings.getString(MainActivity.PREF_SORT, defValPref);
+                        if (userSortPref.equals(MainActivity.SortType.HighestRated.getSortType())) {
+                            sortUrl = MoviesHandler.MOVIES_RATING_DESC;
+                        }
+                        else {
+                            sortUrl = MoviesHandler.MOVIES_POPULARITY_DESC;
+                        }
+                        String url = sortUrl
+                                .concat(MoviesHandler.MOVIES_ADDPAGE)
                                 .concat(Integer.toString(++visiblePages));
-                        TmdbRestClient.get(url, null, new PopularMoviesHandler() {
+                        TmdbRestClient.get(url, null, new MoviesHandler() {
                                     @Override
                                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                                         super.onSuccess(statusCode, headers, response);
@@ -117,7 +138,15 @@ public class MainActivityFragment extends Fragment {
             public void onRefresh() {
                 // Set visible pages back to 1, because we'll be reloading all pages
                 visiblePages = 1;
-                initializeData();
+                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+                String defValPref = "";
+                String userSortPref = settings.getString(MainActivity.PREF_SORT, defValPref);
+                if (userSortPref.equals(MainActivity.SortType.HighestRated.getSortType())) {
+                    initializeData(MainActivity.SortType.HighestRated);
+                }
+                else {
+                    initializeData(MainActivity.SortType.MostPopular);
+                }
                 initializeAdapter();
                 mRecyclerView.refreshDrawableState();
             }
@@ -128,7 +157,7 @@ public class MainActivityFragment extends Fragment {
         return rootView;
     }
 
-    private void initializeData() {
+    private void initializeData(MainActivity.SortType sort) {
         if (movies == null) {
             movies = new ArrayList<>();
         }
@@ -136,7 +165,14 @@ public class MainActivityFragment extends Fragment {
         //TODO: Handle user press of cancel or close of application
 //        RequestHandle handle =
 
-        TmdbRestClient.get(PopularMoviesHandler.POPULARMOVIES_POPULARITY_DESC, null, new PopularMoviesHandler() {
+        String getUrl = "";
+        if (sort == MainActivity.SortType.HighestRated) {
+            getUrl = MoviesHandler.MOVIES_RATING_DESC;
+        }
+        else {
+            getUrl = MoviesHandler.MOVIES_POPULARITY_DESC;
+        }
+        TmdbRestClient.get(getUrl, null, new MoviesHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 super.onSuccess(statusCode, headers, response);
@@ -178,5 +214,23 @@ public class MainActivityFragment extends Fragment {
 
         mRecyclerAdapter = new RecyclerAdapter(getActivity(), movies, clickListener);
         mRecyclerView.setAdapter(mRecyclerAdapter);
+    }
+
+    public void sortByMostPopular() {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        SharedPreferences.Editor preferenceEditor = settings.edit();
+        preferenceEditor.putString(MainActivity.PREF_SORT,MainActivity.SortType.MostPopular.getSortType());
+        preferenceEditor.apply();
+
+        initializeData(MainActivity.SortType.MostPopular);
+    }
+
+    public void sortByHighestRated() {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        SharedPreferences.Editor preferenceEditor = settings.edit();
+        preferenceEditor.putString(MainActivity.PREF_SORT,MainActivity.SortType.HighestRated.getSortType());
+        preferenceEditor.apply();
+
+        initializeData(MainActivity.SortType.HighestRated);
     }
 }

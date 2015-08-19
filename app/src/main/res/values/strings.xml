@@ -5,13 +5,16 @@
 
 <resources>
     <string name="app_name">Monolith</string>
+    <string name="main_poster">Movie Poster</string>
     <string name="action_share">Share</string>
     <string name="error">Error</string>
     <string name="error_unexpected">Oops. Something went terribly wrong.</string>
     <string name="detail_share_subject">Check out this movie:</string>
     <string name="detail_share_hashtag">#MonolithApp</string>
+    <string name="detail_poster">Movie Poster</string>
 
     <!-- Navigation Drawer -->
+    <string name="nav_drawer">Navigation Drawer</string>
     <string name="nav_drawer_most_popular">Most Popular</string>
     <string name="nav_drawer_highest_rated">Highest Rated</string>
     <string name="nav_drawer_settings">Settings</string>

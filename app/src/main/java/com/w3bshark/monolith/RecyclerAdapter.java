@@ -25,12 +25,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MovieV
 
     public static class MovieViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
-        ImageView appPhoto;
+        ImageView poster;
 
         MovieViewHolder(View itemView) {
             super(itemView);
             cv = (CardView) itemView.findViewById(R.id.cv);
-            appPhoto = (ImageView) itemView.findViewById(R.id.app_photo);
+            poster = (ImageView) itemView.findViewById(R.id.poster);
         }
     }
 
@@ -54,15 +54,22 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MovieV
     @Override
     public void onBindViewHolder(MovieViewHolder movieViewHolder, int i) {
         movieViewHolder.cv.setTag(movies.get(i).getTitle());
-        String imgURL = BASE_IMG_URL;
-        boolean isTablet = context.getResources().getBoolean(R.bool.isTablet);
-        if (isTablet) {
-            imgURL = imgURL.concat(IMG_HIGH_RES);
-        } else {
-            imgURL = imgURL.concat(IMG_MED_RES);
+
+        if (movies.get(i).getImageCode() != null && !movies.get(i).getImageCode().isEmpty()) {
+            String imgURL = BASE_IMG_URL;
+            boolean isTablet = context.getResources().getBoolean(R.bool.isTablet);
+            if (isTablet) {
+                imgURL = imgURL.concat(IMG_HIGH_RES);
+            } else {
+                imgURL = imgURL.concat(IMG_MED_RES);
+            }
+            Picasso.with(context).load(imgURL.concat(movies.get(i).getImageCode())).into(movieViewHolder.poster);
         }
-        Picasso.with(context).load(imgURL.concat(movies.get(i).getImageCode())).into(movieViewHolder.appPhoto);
-        movieViewHolder.appPhoto.setContentDescription(movies.get(i).getDescription());
+
+        if (movies.get(i).getDescription() != null && !movies.get(i).getDescription().isEmpty()) {
+            movieViewHolder.poster.setContentDescription(movies.get(i).getDescription());
+        }
+
         movieViewHolder.cv.setOnClickListener(clickListener);
     }
 

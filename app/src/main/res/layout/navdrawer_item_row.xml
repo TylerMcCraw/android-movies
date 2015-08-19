@@ -16,8 +16,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:paddingStart="2dp"
-        android:paddingEnd="10dp" />
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:contentDescription="@string/nav_drawer"/>
 
     <TextView
         android:id="@+id/navdrawer_item_name"
@@ -26,7 +27,7 @@
         android:layout_centerVertical="true"
         android:layout_toEndOf="@+id/navdrawer_item_icon"
         android:paddingStart="0dp"
-        android:paddingEnd="10dp"
+        android:paddingEnd="16dp"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
         android:textColor="@color/white" />
 </RelativeLayout>
