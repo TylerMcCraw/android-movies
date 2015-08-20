@@ -2,7 +2,7 @@
  * Copyright (c) 2015. Tyler McCraw
  */
 
-package com.w3bshark.monolith;
+package com.w3bshark.monolith.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

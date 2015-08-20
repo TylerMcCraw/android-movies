@@ -2,7 +2,7 @@
  * Copyright (c) 2015. Tyler McCraw
  */
 
-package com.w3bshark.monolith;
+package com.w3bshark.monolith.fragments;
 
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -15,6 +15,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.w3bshark.monolith.R;
+import com.w3bshark.monolith.activities.DetailActivity;
+import com.w3bshark.monolith.model.Movie;
 
 import java.text.DateFormat;
 import java.text.ParseException;

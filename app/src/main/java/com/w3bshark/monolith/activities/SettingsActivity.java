@@ -2,11 +2,13 @@
  * Copyright (c) 2015. Tyler McCraw
  */
 
-package com.w3bshark.monolith;
+package com.w3bshark.monolith.activities;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+
+import com.w3bshark.monolith.R;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On

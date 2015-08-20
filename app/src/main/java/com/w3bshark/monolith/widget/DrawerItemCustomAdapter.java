@@ -2,7 +2,7 @@
  * Copyright (c) 2015. Tyler McCraw
  */
 
-package com.w3bshark.monolith;
+package com.w3bshark.monolith.widget;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,6 +12,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.w3bshark.monolith.R;
+import com.w3bshark.monolith.model.DrawerItem;
 
 import java.util.List;
 

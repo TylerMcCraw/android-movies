@@ -2,7 +2,7 @@
  * Copyright (c) 2015. Tyler McCraw
  */
 
-package com.w3bshark.monolith;
+package com.w3bshark.monolith.widget;
 
 import android.content.Context;
 import android.support.v7.widget.CardView;
@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
+import com.w3bshark.monolith.R;
+import com.w3bshark.monolith.model.Movie;
 
 import java.util.List;
 
@@ -38,7 +40,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MovieV
     List<Movie> movies;
     View.OnClickListener clickListener;
 
-    RecyclerAdapter(Context context, List<Movie> movies, View.OnClickListener clickListener) {
+    public RecyclerAdapter(Context context, List<Movie> movies, View.OnClickListener clickListener) {
         this.context = context;
         this.movies = movies;
         this.clickListener = clickListener;

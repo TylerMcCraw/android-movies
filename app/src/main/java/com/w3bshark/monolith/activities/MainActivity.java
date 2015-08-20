@@ -2,7 +2,7 @@
  * Copyright (c) 2015. Tyler McCraw
  */
 
-package com.w3bshark.monolith;
+package com.w3bshark.monolith.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,6 +16,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
+import com.w3bshark.monolith.R;
+import com.w3bshark.monolith.fragments.MainActivityFragment;
+import com.w3bshark.monolith.model.DrawerItem;
+import com.w3bshark.monolith.widget.DrawerItemCustomAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

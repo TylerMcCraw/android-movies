@@ -2,7 +2,7 @@
  * Copyright (c) 2015. Tyler McCraw
  */
 
-package com.w3bshark.monolith;
+package com.w3bshark.monolith.activities;
 
 import android.content.Intent;
 import android.os.Build;
@@ -13,6 +13,10 @@ import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.w3bshark.monolith.R;
+import com.w3bshark.monolith.fragments.DetailActivityFragment;
+import com.w3bshark.monolith.model.Movie;
 
 public class DetailActivity extends AppCompatActivity {
 

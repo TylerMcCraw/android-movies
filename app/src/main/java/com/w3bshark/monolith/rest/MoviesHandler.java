@@ -7,7 +7,7 @@ package com.w3bshark.monolith.rest;
 import android.util.Log;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.w3bshark.monolith.Movie;
+import com.w3bshark.monolith.model.Movie;
 
 import org.apache.http.Header;
 import org.json.JSONArray;

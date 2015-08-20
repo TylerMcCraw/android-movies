@@ -2,7 +2,7 @@
  * Copyright (c) 2015. Tyler McCraw
  */
 
-package com.w3bshark.monolith;
+package com.w3bshark.monolith.fragments;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,8 +16,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.w3bshark.monolith.R;
+import com.w3bshark.monolith.Util;
+import com.w3bshark.monolith.activities.DetailActivity;
+import com.w3bshark.monolith.activities.MainActivity;
+import com.w3bshark.monolith.model.Movie;
 import com.w3bshark.monolith.rest.MoviesHandler;
 import com.w3bshark.monolith.rest.TmdbRestClient;
+import com.w3bshark.monolith.widget.PreCachingGridLayoutManager;
+import com.w3bshark.monolith.widget.RecyclerAdapter;
 
 import org.apache.http.Header;
 import org.json.JSONObject;
@@ -28,7 +35,7 @@ public class MainActivityFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerAdapter mRecyclerAdapter;
-    private GridLayoutManager mLayoutManager;
+    private PreCachingGridLayoutManager mLayoutManager;
     private View mCoordinatorLayoutView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private int pastVisibleItems, visibleItemCount, totalItemCount, visiblePages;
@@ -53,10 +60,12 @@ public class MainActivityFragment extends Fragment {
         // Display only 2 columns if phone; 3 columns if tablet
         boolean isTablet = getResources().getBoolean(R.bool.isTablet);
         if (isTablet) {
-            mLayoutManager = new GridLayoutManager(getActivity(), 3);
+            mLayoutManager = new PreCachingGridLayoutManager(getActivity(), 3);
         } else {
-            mLayoutManager = new GridLayoutManager(getActivity(), 2);
+            mLayoutManager = new PreCachingGridLayoutManager(getActivity(), 2);
         }
+        mLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
+        mLayoutManager.setExtraLayoutSpace(Util.getScreenHeight(getActivity()));
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
