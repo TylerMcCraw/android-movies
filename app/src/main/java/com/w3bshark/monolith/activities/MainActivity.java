@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         private String sortType;
 
-        private SortType(String s) {
+        SortType(String s) {
             sortType = s;
         }
 

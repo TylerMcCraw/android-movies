@@ -40,6 +40,8 @@ public class MoviesHandler extends JsonHttpResponseHandler {
     private ArrayList<Movie> movies;
     private String errorMessage;
 
+    //TODO: handle deprecation: org.apache.http.Header is deprecated in API level 22
+    // https://github.com/loopj/android-async-http/issues/833
     @Override
     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
         try {
@@ -63,6 +65,8 @@ public class MoviesHandler extends JsonHttpResponseHandler {
         }
     }
 
+    //TODO: handle deprecation: org.apache.http.Header is deprecated in API level 22
+    // https://github.com/loopj/android-async-http/issues/833
     @Override
     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
         // Response failed :(

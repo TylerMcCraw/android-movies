@@ -182,6 +182,8 @@ public class MainActivityFragment extends Fragment {
             getUrl = MoviesHandler.MOVIES_POPULARITY_DESC;
         }
         TmdbRestClient.get(getUrl, null, new MoviesHandler() {
+            //TODO: handle deprecation: org.apache.http.Header is deprecated in API level 22
+            // https://github.com/loopj/android-async-http/issues/833
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 super.onSuccess(statusCode, headers, response);
@@ -199,6 +201,8 @@ public class MainActivityFragment extends Fragment {
                 mSwipeRefreshLayout.setRefreshing(false);
             }
 
+            //TODO: handle deprecation: org.apache.http.Header is deprecated in API level 22
+            // https://github.com/loopj/android-async-http/issues/833
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 super.onFailure(statusCode, headers, throwable, errorResponse);

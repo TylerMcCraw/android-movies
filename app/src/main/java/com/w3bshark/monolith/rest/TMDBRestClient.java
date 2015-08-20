@@ -25,7 +25,8 @@ public class TmdbRestClient {
     public static final String SORT_DESC = ".desc";
     public static final String DISCOVER = "discover";
     public static final String DISCOVER_MOVIE = "movie";
-    public static final String DISCOVER_TV = "tv";
+    //TODO: Future enhancement - add ability to view TV shows too
+//    public static final String DISCOVER_TV = "tv";
 
     private static AsyncHttpClient client = new AsyncHttpClient();
 
@@ -33,9 +34,10 @@ public class TmdbRestClient {
         return client.get(getAbsoluteUrl(url), params, responseHandler);
     }
 
-    public static RequestHandle post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-        return client.post(getAbsoluteUrl(url), params, responseHandler);
-    }
+    // Right now POST is never used
+//    public static RequestHandle post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+//        return client.post(getAbsoluteUrl(url), params, responseHandler);
+//    }
 
     private static String getAbsoluteUrl(String relativeUrl) {
         return BASE_URL + relativeUrl;
