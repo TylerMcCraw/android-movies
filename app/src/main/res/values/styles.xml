@@ -37,7 +37,7 @@
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="actionbar">#000000</color>
-    <color name="statusbar">#689F38</color>
+    <color name="statusbar">#000000</color>
     <color name="background">#8BC34A</color>
     <color name="swiperefresh">#8BC34A</color>
 

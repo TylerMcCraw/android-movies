@@ -20,6 +20,7 @@ import com.w3bshark.monolith.activities.DetailActivity;
 import com.w3bshark.monolith.model.Movie;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -65,7 +66,9 @@ public class DetailActivityFragment extends Fragment {
 
             // Rating
             TextView ratingView = (TextView) detailFragment.findViewById(R.id.detail_rating_textview);
-            ratingView.setText(selectedMovie.getVoteAverage().toString());
+            if (selectedMovie.getVoteAverage() != null) {
+                ratingView.setText(new DecimalFormat("#.##").format(selectedMovie.getVoteAverage()));
+            }
             // "Out of" Rating
             TextView ratingTotalView = (TextView) detailFragment.findViewById(R.id.detail_rating_total_textview);
             ratingTotalView.setText("/10");
@@ -86,7 +89,9 @@ public class DetailActivityFragment extends Fragment {
 
             // Description
             TextView descriptionView = (TextView) detailFragment.findViewById(R.id.detail_description_textview);
-            descriptionView.setText(selectedMovie.getDescription());
+            if (selectedMovie.getDescription() != null && !selectedMovie.getDescription().equals("null")) {
+                descriptionView.setText(selectedMovie.getDescription());
+            }
 
         }
 

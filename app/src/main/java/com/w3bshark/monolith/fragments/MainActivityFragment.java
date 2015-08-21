@@ -6,6 +6,7 @@ package com.w3bshark.monolith.fragments;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -57,14 +58,18 @@ public class MainActivityFragment extends Fragment {
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
-        // Display only 2 columns if phone; 3 columns if tablet
         boolean isTablet = getResources().getBoolean(R.bool.isTablet);
-        if (isTablet) {
-            mLayoutManager = new PreCachingGridLayoutManager(getActivity(), 3);
-        } else {
-            mLayoutManager = new PreCachingGridLayoutManager(getActivity(), 2);
+        int spanCount = 1;
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // Display only 1 columns if phone; 2 columns if tablet
+            spanCount = isTablet ? 2 : 1;
+            mLayoutManager = new PreCachingGridLayoutManager(getActivity(), spanCount, GridLayoutManager.HORIZONTAL, false);
         }
-        mLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
+        else {
+            // Display only 2 columns if phone; 3 columns if tablet
+            spanCount = isTablet ? 3 : 2;
+            mLayoutManager = new PreCachingGridLayoutManager(getActivity(), spanCount, GridLayoutManager.VERTICAL, false);
+        }
         mLayoutManager.setExtraLayoutSpace(Util.getScreenHeight(getActivity()));
         mRecyclerView.setLayoutManager(mLayoutManager);
 

@@ -57,30 +57,33 @@
                     android:layout_marginBottom="24dp"
                     android:contentDescription="@string/detail_poster"/>
 
-                <TextView
-                    android:id="@+id/detail_rating_textview"
+                <LinearLayout
+                    android:id="@+id/detail_rating_view"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:layout_toEndOf="@+id/detail_poster"
-                    android:fontFamily="sans-serif-light"
-                    android:textSize="96sp" />
-                <TextView
-                    android:id="@+id/detail_rating_total_textview"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:textColor="@color/primary_text_default_material_light"
-                    android:fontFamily="sans-serif-light"
-                    android:textSize="14sp"
-                    android:layout_alignBaseline="@+id/detail_rating_textview"
-                    android:layout_alignBottom="@+id/detail_rating_textview"
-                    android:layout_alignParentEnd="true" />
+                    android:layout_alignTop="@+id/detail_poster"
+                    android:layout_alignParentEnd="true">
+                    <TextView
+                        android:id="@+id/detail_rating_textview"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:textColor="@color/primary_text_default_material_light"
+                        android:fontFamily="sans-serif-light"
+                        android:textSize="90sp" />
+                    <TextView
+                        android:id="@+id/detail_rating_total_textview"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:textColor="@color/primary_text_default_material_light"
+                        android:fontFamily="sans-serif-light"
+                        android:textSize="14sp" />
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/detail_release_date_textview"
-                    android:layout_gravity="center_horizontal"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:layout_below="@+id/detail_rating_textview"
+                    android:layout_below="@+id/detail_rating_view"
                     android:layout_alignParentEnd="true"
                     android:textColor="@color/primary_text_default_material_light"
                     android:fontFamily="sans-serif-light"

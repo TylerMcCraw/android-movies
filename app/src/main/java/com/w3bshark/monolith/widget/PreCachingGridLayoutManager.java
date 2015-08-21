@@ -19,11 +19,6 @@ public class PreCachingGridLayoutManager extends GridLayoutManager {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    public PreCachingGridLayoutManager(Context context, int spanCount) {
-        super(context, spanCount);
-        this.extraLayoutSpace = spanCount;
-    }
-
     public PreCachingGridLayoutManager(Context context, int spanCount, int orientation, boolean reverseLayout) {
         super(context, spanCount, orientation, reverseLayout);
     }
