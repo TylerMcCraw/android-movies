@@ -46,12 +46,23 @@ public class MainActivityFragment extends Fragment {
     private PreCachingGridLayoutManager mLayoutManager;
     // Layout that allows users to swipe down the screen to refresh data anytime
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    // Counters to keep track of displayed movies
-    private int pastVisibleItems, visibleItemCount, totalItemCount, visiblePages;
     // Keep track of the user scrolling (loading new movies)
     private boolean viewIsLoading = true;
+    // Counters to keep track of displayed movies
+    private int pastVisibleItems, visibleItemCount, totalItemCount, visiblePages;
     // Ever-growing list of movies displayed (binded from our adapter)
     private ArrayList<Movie> movies;
+    // Movie parcelable key for saving instance state
+    private static final String SAVED_MOVIES = "SAVED_MOVIES";
+    // Counter key for saving instance state
+    private static final String PAST_VISIBLE_ITEMS = "PAST_VISIBLE_ITEMS";
+    // Counter key for saving instance state
+    private static final String VISIBLE_ITEM_COUNT = "VISIBLE_ITEM_COUNT";
+    // Counter key for saving instance state
+    private static final String TOTAL_ITEM_COUNT = "TOTAL_ITEM_COUNT";
+    // Counter key for saving instance state
+    private static final String VISIBLE_PAGES = "VISIBLE_PAGES";
+
 
     public MainActivityFragment() {
     }
@@ -68,6 +79,8 @@ public class MainActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+
         // Set up the xml layout
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rv);
@@ -93,21 +106,37 @@ public class MainActivityFragment extends Fragment {
         mLayoutManager.setExtraLayoutSpace(Util.getScreenHeight(getActivity()));
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // Find the user's preferred sort method and fetch the data in initializeData()
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-        String defValPref = "";
-        String userSortPref = settings.getString(MainActivity.PREF_SORT, defValPref);
-        if (userSortPref.isEmpty() || userSortPref.equals(MainActivity.SortType.MostPopular.getSortType())) {
-            initializeData(MainActivity.SortType.MostPopular);
+        // Attempt to restore movie data from savedInstanceState
+        if (savedInstanceState != null) {
+            pastVisibleItems = savedInstanceState.getInt(PAST_VISIBLE_ITEMS);
+            visibleItemCount = savedInstanceState.getInt(VISIBLE_ITEM_COUNT);
+            totalItemCount = savedInstanceState.getInt(TOTAL_ITEM_COUNT);
+            visiblePages = savedInstanceState.getInt(VISIBLE_PAGES);
+            movies = savedInstanceState.getParcelableArrayList(SAVED_MOVIES);
+            if (mRecyclerAdapter == null) {
+                initializeAdapter();
+            } else {
+                mRecyclerAdapter.notifyDataSetChanged();
+            }
         }
-        else {
-            initializeData(MainActivity.SortType.HighestRated);
+        // If we couldn't retrieve movies from a saved instance state
+        if (movies == null || movies.size() == 0) {
+            // Find the user's preferred sort method and fetch the data in initializeData()
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+            String defValPref = "";
+            String userSortPref = settings.getString(MainActivity.PREF_SORT, defValPref);
+            if (userSortPref.isEmpty() || userSortPref.equals(MainActivity.SortType.MostPopular.getSortType())) {
+                initializeData(MainActivity.SortType.MostPopular);
+            } else {
+                initializeData(MainActivity.SortType.HighestRated);
+            }
+
+            // Initially we'll start with 1 page of movies (paging is a TMDB term)
+            // Then, we'll slowly roll in more and more pages as needed by user
+            // http://docs.themoviedb.apiary.io/#reference/discover/discovermovie
+            visiblePages = 1;
         }
 
-        // Initially we'll start with 1 page of movies (paging is a TMDB term)
-        // Then, we'll slowly roll in more and more pages as needed by user
-        // http://docs.themoviedb.apiary.io/#reference/discover/discovermovie
-        visiblePages = 1;
         // Handle user continuously scrolling
         // Pages of new movies will be added in as user scrolls
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -296,5 +325,17 @@ public class MainActivityFragment extends Fragment {
 
         // Fetch the movie data
         initializeData(MainActivity.SortType.HighestRated);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        if (movies != null) {
+            savedInstanceState.putParcelableArrayList(SAVED_MOVIES, movies);
+        }
+        savedInstanceState.putInt(PAST_VISIBLE_ITEMS, pastVisibleItems);
+        savedInstanceState.putInt(VISIBLE_ITEM_COUNT, visibleItemCount);
+        savedInstanceState.putInt(TOTAL_ITEM_COUNT, totalItemCount);
+        savedInstanceState.putInt(VISIBLE_PAGES, visiblePages);
+        super.onSaveInstanceState(savedInstanceState);
     }
 }

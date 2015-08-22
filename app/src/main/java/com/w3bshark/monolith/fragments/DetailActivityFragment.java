@@ -40,6 +40,8 @@ public class DetailActivityFragment extends Fragment {
     private static final String IMG_MED_RES = "w185";
     // Extension path of Base URL for selecting 342 (width) based movie posters
     private static final String IMG_HIGH_RES = "w342";
+    // Movie parcelable key for saving instance state
+    private static final String SAVED_MOVIE = "SAVED_MOVIE";
 
     public DetailActivityFragment() {
     }
@@ -55,17 +57,26 @@ public class DetailActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+
+        Movie selectedMovie = null;
+        // Attempt to restore from savedInstanceState
+        if (savedInstanceState != null) {
+            selectedMovie = savedInstanceState.getParcelable(SAVED_MOVIE);
+        }
 
         // Inflate the fragment layout
         View detailFragment = inflater.inflate(R.layout.fragment_detail, container, false);
         // If we weren't given the movie data, display an error message
-        if (getActivity().getIntent() == null || !getActivity().getIntent().hasExtra(DetailActivity.EXTRASCURRENTMOVIE)) {
+        if (getActivity().getIntent() == null) {
             String snackMessage;
             snackMessage = getActivity().getApplicationContext().getString(R.string.error_unexpected);
             Snackbar.make(this.getView(), snackMessage, Snackbar.LENGTH_SHORT).show();
         // Otherwise, load the movie data into each corresponding fragment view
         } else {
-            Movie selectedMovie = getActivity().getIntent().getParcelableExtra(DetailActivity.EXTRASCURRENTMOVIE);
+            if (selectedMovie == null) {
+                selectedMovie = getActivity().getIntent().getParcelableExtra(DetailActivity.EXTRASCURRENTMOVIE);
+            }
 
             // Title
             TextView titleView = (TextView) detailFragment.findViewById(R.id.detail_movie_title);
@@ -115,5 +126,16 @@ public class DetailActivityFragment extends Fragment {
         }
 
         return detailFragment;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        if (getActivity().getIntent() != null &&
+                getActivity().getIntent().getParcelableExtra(DetailActivity.EXTRASCURRENTMOVIE) != null) {
+            savedInstanceState.putParcelable(SAVED_MOVIE,
+                    getActivity().getIntent().getParcelableExtra(DetailActivity.EXTRASCURRENTMOVIE));
+        }
+
+        super.onSaveInstanceState(savedInstanceState);
     }
 }
