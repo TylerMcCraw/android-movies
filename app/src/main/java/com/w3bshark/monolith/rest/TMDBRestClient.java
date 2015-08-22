@@ -21,7 +21,11 @@ public class TmdbRestClient {
 
     // API Key to be used for all GET/POST calls
     public static final String API_KEY = "api_key";
-    public static final String TMDB_APIKEY = "b135eb044beeebb67df1a9b6ee3709cf";
+    // NOTE: You MUST generate your own API KEY at https://www.themoviedb.org/documentation/api
+    // Further Terms of Use information can be found at
+    //      https://www.themoviedb.org/documentation/api/terms-of-use
+    // Replace your generated API key in TMDB_APIKEY below
+    public static final String TMDB_APIKEY = "";
 
     // API key words to be used for relative URL additions
     public static final String SORT_BY = "sort_by";
