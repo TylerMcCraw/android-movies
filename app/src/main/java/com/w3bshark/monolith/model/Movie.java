@@ -7,6 +7,11 @@ package com.w3bshark.monolith.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * Model class that represents a movie
+ * Representing movie data returned from TMDB API
+ * This class handles marshalling of data via inheritance from Parcelable
+ */
 public class Movie implements Parcelable {
 
     String title;
@@ -40,9 +45,7 @@ public class Movie implements Parcelable {
         dest.writeString(releaseDate);
     }
 
-    public static final Parcelable.Creator<Movie> CREATOR
-            = new Parcelable.Creator<Movie>() {
-
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
         public Movie createFromParcel(Parcel in) {
             return new Movie(in);
         }

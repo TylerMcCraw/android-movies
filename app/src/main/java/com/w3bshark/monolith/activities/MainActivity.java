@@ -25,28 +25,41 @@ import com.w3bshark.monolith.widget.DrawerItemCustomAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * An AppCompatActivity that presents a grid of movies sorted by either "most popular" or
+ * "highest rated". Movie data is pulled asynchronously from the TheMovieDatabase API.
+ * Movie poser images are pre-fetched via Picasso using URLs from the TMDB API.
+ */
 public class MainActivity extends AppCompatActivity {
 
+    // Key for storing shared pref setting of default sort
     public static final String PREF_SORT = "USER_PREF_SORT";
+    // Currently selected sort while app is running
     private int selectedSort;
+    // List of navigation drawer items
     private List<DrawerItem> mNavDrawerItems;
-    private DrawerLayout mDrawerLayout;
+    // View of navigation drawer items
     private ListView mDrawerList;
+    // Layout of Navigation Drawer
+    private DrawerLayout mDrawerLayout;
+    // Toggle for keeping track of action bar nav drawer state
     private ActionBarDrawerToggle mDrawerToggle;
+    // Enum for keeping track of available sorts
     public enum SortType {
         MostPopular("MP"), HighestRated("HR");
-
         private String sortType;
-
         SortType(String s) {
             sortType = s;
         }
-
         public String getSortType() {
             return sortType;
         }
     }
 
+    /**
+     * Handle creation of the movie list activity, navigation drawer, and the activity's fragment
+     * @param savedInstanceState instance state of the application activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,10 +128,12 @@ public class MainActivity extends AppCompatActivity {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * A listener for handling user selection of navigation drawer items
+     */
     private class DrawerItemClickListener implements android.widget.AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
@@ -126,10 +141,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Handle user selection of navigation drawer items
+     * @param position the position number of the selected item
+     */
     private void selectItem(int position) {
         MainActivityFragment fragment;
         switch(position) {
             case 0:
+                // This is the Sort By "Most Popular" option
                 // Highlight the selected item
                 mDrawerList.setItemChecked(position, true);
                 selectedSort = position;
@@ -137,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 fragment.sortByMostPopular();
                 break;
             case 1:
+                // This is the Sort By "Highest Rated" option
                 // Highlight the selected item
                 mDrawerList.setItemChecked(position, true);
                 selectedSort = position;
@@ -144,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
                 fragment.sortByHighestRated();
                 break;
             case 2:
+                // This is the Settings option
                 mDrawerList.setItemChecked(position, false);
                 mDrawerList.setItemChecked(selectedSort, true);
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
@@ -155,11 +177,13 @@ public class MainActivity extends AppCompatActivity {
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
+    /**
+     * Set up the navigation drawer to display sorting options for sorting the movie list
+     */
     private void initializeNavDrawerData() {
         if (mNavDrawerItems == null) {
             mNavDrawerItems = new ArrayList<>();
         }
-
         mNavDrawerItems.add(new DrawerItem(R.drawable.ic_action_sort_by_size, getString(R.string.nav_drawer_most_popular)));
         mNavDrawerItems.add(new DrawerItem(R.drawable.ic_action_sort_by_size, getString(R.string.nav_drawer_highest_rated)));
 

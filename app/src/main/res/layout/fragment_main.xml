@@ -27,4 +27,13 @@
             />
     </android.support.v4.widget.SwipeRefreshLayout>
 
+    <!--TODO: add a FAB search button to search for movies -->
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|end"-->
+        <!--android:layout_margin="16dp"-->
+        <!--android:clickable="true"-->
+        <!--android:src="@drawable/abc_ic_search_api_mtrl_alpha" />-->
+
 </android.support.design.widget.CoordinatorLayout>

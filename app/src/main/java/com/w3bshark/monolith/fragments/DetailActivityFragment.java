@@ -26,25 +26,44 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * A custom fragment for displaying movie details based on the user-selected movie
+ * This fragment is created within DetailActivity
+ */
 public class DetailActivityFragment extends Fragment {
 
+    // Log tag to keep track of logs created against this class
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     // Base URL for all images hosted on TMDB
     private static final String BASE_IMG_URL = "http://image.tmdb.org/t/p/";
+    // Extension path of Base URL for selecting 185 (height) based movie posters
     private static final String IMG_MED_RES = "w185";
+    // Extension path of Base URL for selecting 342 (height) based movie posters
     private static final String IMG_HIGH_RES = "w342";
 
     public DetailActivityFragment() {
     }
 
+    /**
+     * Handle creation of fragment view, assign proper data to elements of view, and handle
+     * uncaught exceptions in displaying data from adapter
+     * @param inflater used for inflating the xml layout
+     * @param container view to inflate the xml layout into
+     * @param savedInstanceState instance state of the application activity
+     * @return main view displayed in the fragment
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        // Inflate the fragment layout
         View detailFragment = inflater.inflate(R.layout.fragment_detail, container, false);
+        // If we weren't given the movie data, display an error message
         if (getActivity().getIntent() == null || !getActivity().getIntent().hasExtra(DetailActivity.EXTRASCURRENTMOVIE)) {
             String snackMessage;
             snackMessage = getActivity().getApplicationContext().getString(R.string.error_unexpected);
             Snackbar.make(this.getView(), snackMessage, Snackbar.LENGTH_SHORT).show();
+        // Otherwise, load the movie data into each corresponding fragment view
         } else {
             Movie selectedMovie = getActivity().getIntent().getParcelableExtra(DetailActivity.EXTRASCURRENTMOVIE);
 
@@ -54,7 +73,7 @@ public class DetailActivityFragment extends Fragment {
 
             // Poster
             ImageView image = (ImageView) detailFragment.findViewById(R.id.detail_poster);
-
+            // Fetch the poster for the movie using Picasso
             String imgURL = BASE_IMG_URL;
             boolean isTablet = getResources().getBoolean(R.bool.isTablet);
             if (isTablet) {
@@ -82,6 +101,7 @@ public class DetailActivityFragment extends Fragment {
                 convertedDate = tmdbFormat.parse(selectedMovie.getReleaseDate());
             }
             catch (ParseException e) {
+                // If we couldn't parse the date for whatever reason, log it.
                 Log.e(LOG_TAG, e.getMessage());
             }
             String convertedDateStr = displayFormat.format(convertedDate);
@@ -92,7 +112,6 @@ public class DetailActivityFragment extends Fragment {
             if (selectedMovie.getDescription() != null && !selectedMovie.getDescription().equals("null")) {
                 descriptionView.setText(selectedMovie.getDescription());
             }
-
         }
 
         return detailFragment;

@@ -18,13 +18,21 @@ import com.w3bshark.monolith.model.Movie;
 
 import java.util.List;
 
+/**
+ * Adapter for binding data to RecyclerView used in MainActivityFragment
+ */
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MovieViewHolder> {
 
     // Base URL for all images hosted on TMDB
     private static final String BASE_IMG_URL = "http://image.tmdb.org/t/p/";
+    // Extension path of Base URL for selecting 342 (height) based movie posters
     private static final String IMG_MED_RES = "w342";
+    // Extension path of Base URL for selecting 780 (height) based movie posters
     private static final String IMG_HIGH_RES = "w780";
 
+    /**
+     * View holder for handling subview binding in RecyclerView
+     */
     public static class MovieViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
         ImageView poster;
@@ -53,10 +61,18 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MovieV
         return new MovieViewHolder(v);
     }
 
+    /**
+     * Bind movie data to the view holder for RecyclerView and set the
+     * click listener to each card view so that user can select an individual movie view
+     * @param movieViewHolder the view holder for binding data
+     * @param i the position of the view holder in the RecyclerView
+     */
     @Override
     public void onBindViewHolder(MovieViewHolder movieViewHolder, int i) {
+        // Set the tag of the CardView to the unique movie title, in case we need this later
         movieViewHolder.cv.setTag(movies.get(i).getTitle());
 
+        // Bind the movie data to the view elements
         if (movies.get(i).getImageCode() != null && !movies.get(i).getImageCode().isEmpty()) {
             String imgURL = BASE_IMG_URL;
             boolean isTablet = context.getResources().getBoolean(R.bool.isTablet);
@@ -72,9 +88,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MovieV
             movieViewHolder.poster.setContentDescription(movies.get(i).getDescription());
         }
 
+        // Bind the click listener to the CardView
         movieViewHolder.cv.setOnClickListener(clickListener);
     }
 
+    /**
+     * Set the item count to the count of the movies array list
+     * @return the count of items in the RecyclerView
+     */
     @Override
     public int getItemCount() {
         return movies == null ? 0 : movies.size();

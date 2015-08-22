@@ -18,12 +18,19 @@ import com.w3bshark.monolith.model.DrawerItem;
 
 import java.util.List;
 
+/**
+ * Adapter for Navigation Drawer used in MainActivity
+ */
 public class DrawerItemCustomAdapter extends ArrayAdapter<DrawerItem> {
 
     Context mContext;
+    // Resource ID of container for navigation drawer items
     int layoutResourceId;
     List<DrawerItem> data = null;
 
+    /**
+     * View holder for navigation drawer items
+     */
     public static class DrawerItemViewHolder {
         ImageView icon;
         TextView name;
@@ -41,6 +48,13 @@ public class DrawerItemCustomAdapter extends ArrayAdapter<DrawerItem> {
         this.data = data;
     }
 
+    /**
+     * Bind the data with the navigation drawer item view
+     * @param position the position number of the item in the navigation drawer
+     * @param convertView the view of the navigation drawer item
+     * @param parent the parent view of the navigation drawer item
+     * @return the manipulated view of the navigation drawer item
+     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View drawerItem = convertView;

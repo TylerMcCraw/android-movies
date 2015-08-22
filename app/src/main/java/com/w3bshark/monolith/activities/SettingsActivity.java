@@ -25,10 +25,13 @@ public class SettingsActivity extends PreferenceActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new SunshinePreferenceFragment()).commit();
+        getFragmentManager().beginTransaction().replace(android.R.id.content, new MonolithPreferenceFragment()).commit();
     }
 
-    public static class SunshinePreferenceFragment extends PreferenceFragment {
+    /**
+     * A PreferenceFragment that handles the presentation of the preferences
+     */
+    public static class MonolithPreferenceFragment extends PreferenceFragment {
         @Override
         public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);

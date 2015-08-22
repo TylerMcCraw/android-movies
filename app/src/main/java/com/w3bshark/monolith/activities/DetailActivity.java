@@ -18,14 +18,24 @@ import com.w3bshark.monolith.R;
 import com.w3bshark.monolith.fragments.DetailActivityFragment;
 import com.w3bshark.monolith.model.Movie;
 
+/**
+ * An AppCompatActivity that presents movie details to the user for a specific
+ * movie that the user has selected. The activity will allow the user to view a rating,
+ * watch trailers, and share the movie via a share intent
+ */
 public class DetailActivity extends AppCompatActivity {
 
+    // Used for passing movie data to a share intent
     public static final String EXTRASCURRENTMOVIE = "EXTRAS_CURRENT_MOVIE";
+    // Used for logging against this class
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
-
-    //Used for social sharing
+    // Used for social sharing
     private ShareActionProvider mShareActionProvider;
 
+    /**
+     * Set up the fragment for displaying the movie details
+     * @param savedInstanceState the instancestate of the app
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,13 +47,21 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
-    // Call to update the share intent for custom use
+    /**
+     * Call to update the share intent for custom use
+     * @param shareIntent the intent used by the shareactionprovider
+     */
     public void setShareIntent(Intent shareIntent) {
         if (mShareActionProvider != null) {
             mShareActionProvider.setShareIntent(shareIntent);
         }
     }
 
+    /**
+     * Overridden method to display the share action button in the options menu
+     * @param menu the options menu
+     * @return boolean - if options were created for the menu
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -63,17 +81,11 @@ public class DetailActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    // Returns the default share intent
+    /**
+     * Sets up and returns the default share intent for allowing the user to share
+     * the selected movie
+     * @return the share intent
+     */
     private Intent getDefaultShareIntent() {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");

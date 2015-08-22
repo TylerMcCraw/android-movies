@@ -16,8 +16,16 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/**
+ * Custom HTTP response handler class specifically for handling
+ * transforming REST responses to/from TMDB's "discover" API for movies
+ * See <a href="https://www.themoviedb.org/documentation/api"> TMDB API </a>
+ *     and <a href="http://docs.themoviedb.apiary.io/#reference/discover/discovermovie/get">
+ *         TMDB Discover API on Apiary </a>
+ */
 public class MoviesHandler extends JsonHttpResponseHandler {
 
+    // Log tag to keep track of logs created against this class
     private static final String LOG_TAG = MoviesHandler.class.getSimpleName();
     // This resolves to the relative URL below to sort movies by popularity in descending order
     // discover/movie?api_key=b135eb044beeebb67df1a9b6ee3709cf&sort_by=popularity.desc"
@@ -36,10 +44,19 @@ public class MoviesHandler extends JsonHttpResponseHandler {
                     .concat("=").concat(TmdbRestClient.SORT_RATING)
                     .concat(TmdbRestClient.SORT_DESC);
     public static final String MOVIES_PAGE = "page";
+    // This is used for the scroll listener in MainActivityFragment to determine what
+    // "page" of data should be returned from the TMDB API
     public static final String MOVIES_ADDPAGE = "&".concat(MOVIES_PAGE).concat("=");
     private ArrayList<Movie> movies;
     private String errorMessage;
 
+    /**
+     * Handle successful response from the request
+     * Add movie data from response JSON to movies array list
+     * @param statusCode http response status line
+     * @param headers    response headers if any
+     * @param response   parsed response if any
+     */
     //TODO: handle deprecation: org.apache.http.Header is deprecated in API level 22
     // https://github.com/loopj/android-async-http/issues/833
     @Override
@@ -65,6 +82,13 @@ public class MoviesHandler extends JsonHttpResponseHandler {
         }
     }
 
+    /**
+     * Handle failed response from the request
+     * @param statusCode    http response status line
+     * @param headers       response headers if any
+     * @param throwable     throwable describing the way request failed
+     * @param errorResponse parsed response if any
+     */
     //TODO: handle deprecation: org.apache.http.Header is deprecated in API level 22
     // https://github.com/loopj/android-async-http/issues/833
     @Override
@@ -81,6 +105,10 @@ public class MoviesHandler extends JsonHttpResponseHandler {
         }
     }
 
+    /**
+     * Handle custom transformation of movie data
+     * @return array list of movies
+     */
     public ArrayList<Movie> parseMovies() {
         return movies;
     }

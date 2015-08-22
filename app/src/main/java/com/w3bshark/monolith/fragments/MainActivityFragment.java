@@ -32,34 +32,54 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/**
+ * A custom fragment for displaying a grid/list of movies
+ * This fragment is created within MainActivity
+ */
 public class MainActivityFragment extends Fragment {
 
+    // Our recycler view used to display movies as card views
     private RecyclerView mRecyclerView;
+    // Adapter used to bind movie data to our recycler view
     private RecyclerAdapter mRecyclerAdapter;
+    // Custom-built GridLayoutManager for pre-caching picasso fetching of movie poster images
     private PreCachingGridLayoutManager mLayoutManager;
-    private View mCoordinatorLayoutView;
+    // Layout that allows users to swipe down the screen to refresh data anytime
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    // Counters to keep track of displayed movies
     private int pastVisibleItems, visibleItemCount, totalItemCount, visiblePages;
+    // Keep track of the user scrolling (loading new movies)
     private boolean viewIsLoading = true;
+    // Ever-growing list of movies displayed (binded from our adapter)
     private ArrayList<Movie> movies;
 
     public MainActivityFragment() {
     }
 
+    /**
+     * Handle creation of fragment view, fetch data via TmdbRestClient,
+     * initialize our data adapter (RecylcerAdapter) and bind the data,
+     * define our scroll listener, and bind the swipe refresh layout
+     * @param inflater used for inflating the xml layout
+     * @param container view to inflate the xml layout into
+     * @param savedInstanceState instance state of the application activity
+     * @return main view displayed in the fragment
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Set up the xml layout
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rv);
-        mCoordinatorLayoutView = rootView.findViewById(R.id.main_coordinator_layout);
+//        View mCoordinatorLayoutView = rootView.findViewById(R.id.main_coordinator_layout);
 
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
+        // Improves performance if changes in content do not change
+        // the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
+        // Set up our custom grid layout and define number of columns to display
         boolean isTablet = getResources().getBoolean(R.bool.isTablet);
-        int spanCount = 1;
+        int spanCount;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             // Display only 1 columns if phone; 2 columns if tablet
             spanCount = isTablet ? 2 : 1;
@@ -73,6 +93,7 @@ public class MainActivityFragment extends Fragment {
         mLayoutManager.setExtraLayoutSpace(Util.getScreenHeight(getActivity()));
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        // Find the user's preferred sort method and fetch the data in initializeData()
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         String defValPref = "";
         String userSortPref = settings.getString(MainActivity.PREF_SORT, defValPref);
@@ -103,7 +124,7 @@ public class MainActivityFragment extends Fragment {
                     if ((visibleItemCount + pastVisibleItems) >= (totalItemCount)) {
                         viewIsLoading = false;
 
-                        String sortUrl = "";
+                        String sortUrl;
                         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
                         String defValPref = "";
                         String userSortPref = settings.getString(MainActivity.PREF_SORT, defValPref);
@@ -118,6 +139,8 @@ public class MainActivityFragment extends Fragment {
                                 .concat(Integer.toString(++visiblePages));
                         TmdbRestClient.get(url, null, new MoviesHandler() {
                                     @Override
+                                    //TODO: handle deprecation: org.apache.http.Header is deprecated in API level 22
+                                    // https://github.com/loopj/android-async-http/issues/833
                                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                                         super.onSuccess(statusCode, headers, response);
                                         if (this.parseMovies() != null && !this.parseMovies().isEmpty()) {
@@ -171,6 +194,11 @@ public class MainActivityFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * Fetch data from TMDB via our rest client, TmdbRestClient, based on
+     * passed sort type
+     * @param sort sort type based on SortType enum
+     */
     private void initializeData(MainActivity.SortType sort) {
         if (movies == null) {
             movies = new ArrayList<>();
@@ -179,13 +207,14 @@ public class MainActivityFragment extends Fragment {
         //TODO: Handle user press of cancel or close of application
 //        RequestHandle handle =
 
-        String getUrl = "";
+        String getUrl;
         if (sort == MainActivity.SortType.HighestRated) {
             getUrl = MoviesHandler.MOVIES_RATING_DESC;
         }
         else {
             getUrl = MoviesHandler.MOVIES_POPULARITY_DESC;
         }
+        // Fetch movie data our rest client and bind the data
         TmdbRestClient.get(getUrl, null, new MoviesHandler() {
             //TODO: handle deprecation: org.apache.http.Header is deprecated in API level 22
             // https://github.com/loopj/android-async-http/issues/833
@@ -219,7 +248,13 @@ public class MainActivityFragment extends Fragment {
 //      handle.cancel(true);
     }
 
+    /**
+     * Set up our RecyclerAdapter to bind the data to the RecyclerView and handle
+     * user click of movie (CardView) in the RecyclerView
+     */
     private void initializeAdapter() {
+        // We must create the clicklistener here so that the adapter
+        // can bind the data with the element that is clicked
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -230,25 +265,36 @@ public class MainActivityFragment extends Fragment {
             }
         };
 
+        // Initialize the RecyclerAdapter and bind movies
         mRecyclerAdapter = new RecyclerAdapter(getActivity(), movies, clickListener);
         mRecyclerView.setAdapter(mRecyclerAdapter);
     }
 
+    /**
+     * Fetch movie data from TMDB that is sorted by "Most Popular"
+     */
     public void sortByMostPopular() {
+        // Set the user shared preference to MostPopular
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         SharedPreferences.Editor preferenceEditor = settings.edit();
         preferenceEditor.putString(MainActivity.PREF_SORT,MainActivity.SortType.MostPopular.getSortType());
         preferenceEditor.apply();
 
+        // Fetch the movie data
         initializeData(MainActivity.SortType.MostPopular);
     }
 
+    /**
+     * Fetch movie data from TMDB that is sorted by "Highest Rated"
+     */
     public void sortByHighestRated() {
+        // Set the user shared preference to HighestRated
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         SharedPreferences.Editor preferenceEditor = settings.edit();
         preferenceEditor.putString(MainActivity.PREF_SORT,MainActivity.SortType.HighestRated.getSortType());
         preferenceEditor.apply();
 
+        // Fetch the movie data
         initializeData(MainActivity.SortType.HighestRated);
     }
 }
