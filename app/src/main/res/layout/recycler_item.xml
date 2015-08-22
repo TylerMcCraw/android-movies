@@ -9,11 +9,11 @@
     android:id="@+id/cv"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="0dp"
-    android:padding="0dp"
+    android:layout_margin="@dimen/recycler_item_cv_padding"
+    android:padding="@dimen/recycler_item_cv_padding"
     card_view:cardBackgroundColor="@android:color/black"
-    card_view:cardCornerRadius="0dp"
-    card_view:cardElevation="0dp"
+    card_view:cardCornerRadius="@dimen/recycler_item_cv_cornerradius"
+    card_view:cardElevation="@dimen/recycler_item_cv_elevation"
     card_view:cardPreventCornerOverlap="false">
 
     <RelativeLayout
@@ -21,8 +21,8 @@
         android:layout_height="wrap_content">
         <ImageView
             android:id="@+id/poster"
-            android:layout_width="185dp"
-            android:layout_height="277dp"
+            android:layout_width="@dimen/recycler_item_image_width"
+            android:layout_height="@dimen/recycler_item_image_height"
             android:scaleType="centerCrop"
             android:layout_centerInParent="true"
             android:contentDescription="@string/main_poster" />

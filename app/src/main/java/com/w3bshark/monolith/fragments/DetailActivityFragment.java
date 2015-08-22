@@ -36,9 +36,9 @@ public class DetailActivityFragment extends Fragment {
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     // Base URL for all images hosted on TMDB
     private static final String BASE_IMG_URL = "http://image.tmdb.org/t/p/";
-    // Extension path of Base URL for selecting 185 (height) based movie posters
+    // Extension path of Base URL for selecting 185 (width) based movie posters
     private static final String IMG_MED_RES = "w185";
-    // Extension path of Base URL for selecting 342 (height) based movie posters
+    // Extension path of Base URL for selecting 342 (width) based movie posters
     private static final String IMG_HIGH_RES = "w342";
 
     public DetailActivityFragment() {

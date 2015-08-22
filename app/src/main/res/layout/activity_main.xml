@@ -17,11 +17,11 @@
         tools:context=".MainActivity"
         tools:ignore="MergeRootFrame" />
     <ListView android:id="@+id/left_drawer"
-        android:layout_width="240dp"
+        android:layout_width="@dimen/main_activity_navdrawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:choiceMode="singleChoice"
         android:divider="@android:color/transparent"
-        android:dividerHeight="0dp"
+        android:dividerHeight="@dimen/main_activity_navdrawer_divider_height"
         android:background="#111"/>
 </android.support.v4.widget.DrawerLayout>

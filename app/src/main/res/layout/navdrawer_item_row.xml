@@ -8,7 +8,7 @@
     android:layout_height="wrap_content"
     android:background="?android:attr/activatedBackgroundIndicator"
     android:minHeight="?android:attr/listPreferredItemHeightSmall"
-    android:padding="10dp" >
+    android:padding="@dimen/navdrawer_item_padding" >
 
     <ImageView
         android:id="@+id/navdrawer_item_icon"
@@ -16,8 +16,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:paddingStart="@dimen/navdrawer_item_image_paddingstart"
+        android:paddingEnd="@dimen/navdrawer_item_image_paddingend"
         android:contentDescription="@string/nav_drawer"/>
 
     <TextView
@@ -26,8 +26,8 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toEndOf="@+id/navdrawer_item_icon"
-        android:paddingStart="0dp"
-        android:paddingEnd="16dp"
+        android:paddingStart="@dimen/navdrawer_item_text_paddingstart"
+        android:paddingEnd="@dimen/navdrawer_item_text_paddingend"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
         android:textColor="@color/white" />
 </RelativeLayout>

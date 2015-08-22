@@ -25,9 +25,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MovieV
 
     // Base URL for all images hosted on TMDB
     private static final String BASE_IMG_URL = "http://image.tmdb.org/t/p/";
-    // Extension path of Base URL for selecting 342 (height) based movie posters
+    // Extension path of Base URL for selecting 342 (width) based movie posters
     private static final String IMG_MED_RES = "w342";
-    // Extension path of Base URL for selecting 780 (height) based movie posters
+    // Extension path of Base URL for selecting 780 (width) based movie posters
     private static final String IMG_HIGH_RES = "w780";
 
     /**

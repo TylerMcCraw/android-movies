@@ -20,8 +20,8 @@
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:orientation="horizontal"
-            android:minHeight="125dp"
-            android:padding="16dp"
+            android:minHeight="@dimen/detail_fragment_title_min_height"
+            android:padding="@dimen/detail_fragment_title_padding"
             android:background="@color/background">
             <TextView
                 android:fontFamily="sans-serif-condensed"
@@ -37,10 +37,10 @@
             android:gravity="center_horizontal"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginStart="@dimen/detail_fragment_main_marginstart"
+            android:layout_marginTop="@dimen/detail_fragment_main_margintop"
             android:orientation="horizontal"
-            android:padding="16dp">
+            android:padding="@dimen/detail_fragment_main_padding">
 
             <RelativeLayout
                 android:gravity="start"
@@ -50,11 +50,11 @@
 
                 <ImageView
                     android:id="@+id/detail_poster"
-                    android:layout_width="154dp"
-                    android:layout_height="232dp"
+                    android:layout_width="@dimen/detail_fragment_poster_width"
+                    android:layout_height="@dimen/detail_fragment_poster_height"
                     android:scaleType="centerCrop"
-                    android:layout_marginEnd="6dp"
-                    android:layout_marginBottom="24dp"
+                    android:layout_marginEnd="@dimen/detail_fragment_poster_marginend"
+                    android:layout_marginBottom="@dimen/detail_fragment_poster_marginbottom"
                     android:contentDescription="@string/detail_poster"/>
 
                 <LinearLayout

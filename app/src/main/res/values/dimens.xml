@@ -7,4 +7,36 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- Main Activity dimensions -->
+    <dimen name="main_activity_navdrawer_width">240dp</dimen>
+    <dimen name="main_activity_navdrawer_divider_height">0dp</dimen>
+
+    <!-- Main Activity Fragment dimensions -->
+
+    <!-- Detail Activity Fragment dimensions -->
+    <dimen name="detail_fragment_title_min_height">125dp</dimen>
+    <dimen name="detail_fragment_title_padding">16dp</dimen>
+    <dimen name="detail_fragment_main_marginstart">10dp</dimen>
+    <dimen name="detail_fragment_main_margintop">10dp</dimen>
+    <dimen name="detail_fragment_main_padding">16dp</dimen>
+    <dimen name="detail_fragment_poster_width">154dp</dimen>
+    <dimen name="detail_fragment_poster_height">232dp</dimen>
+    <dimen name="detail_fragment_poster_marginend">6dp</dimen>
+    <dimen name="detail_fragment_poster_marginbottom">24dp</dimen>
+
+    <!-- Navigation Drawer Item -->
+    <dimen name="navdrawer_item_padding">10dp</dimen>
+    <dimen name="navdrawer_item_image_paddingstart">16dp</dimen>
+    <dimen name="navdrawer_item_image_paddingend">16dp</dimen>
+    <dimen name="navdrawer_item_text_paddingstart">0dp</dimen>
+    <dimen name="navdrawer_item_text_paddingend">16dp</dimen>
+
+    <!-- RecyclerView Item -->
+    <dimen name="recycler_item_cv_margin">0dp</dimen>
+    <dimen name="recycler_item_cv_padding">0dp</dimen>
+    <dimen name="recycler_item_cv_cornerradius">0dp</dimen>
+    <dimen name="recycler_item_cv_elevation">0dp</dimen>
+    <dimen name="recycler_item_image_width">185dp</dimen>
+    <dimen name="recycler_item_image_height">277dp</dimen>
 </resources>
