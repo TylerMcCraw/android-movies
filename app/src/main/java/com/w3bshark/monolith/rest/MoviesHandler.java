@@ -28,7 +28,7 @@ public class MoviesHandler extends JsonHttpResponseHandler {
     // Log tag to keep track of logs created against this class
     private static final String LOG_TAG = MoviesHandler.class.getSimpleName();
     // This resolves to the relative URL below to sort movies by popularity in descending order
-    // discover/movie?api_key=b135eb044beeebb67df1a9b6ee3709cf&sort_by=popularity.desc"
+    // discover/movie?sort_by=popularity.desc"
     public static final String MOVIES_POPULARITY_DESC =
             TmdbRestClient.DISCOVER.concat("/").concat(TmdbRestClient.DISCOVER_MOVIE)
                     .concat("?").concat(TmdbRestClient.API_KEY).concat("=")
@@ -36,7 +36,7 @@ public class MoviesHandler extends JsonHttpResponseHandler {
                     .concat("=").concat(TmdbRestClient.SORT_POPULARITY)
                     .concat(TmdbRestClient.SORT_DESC);
     // This resolves to the relative URL below to sort movies by popularity in descending order
-    // discover/movie?api_key=b135eb044beeebb67df1a9b6ee3709cf&sort_by=vote_average.desc"
+    // discover/movie?api_key=&sort_by=vote_average.desc"
     public static final String MOVIES_RATING_DESC =
             TmdbRestClient.DISCOVER.concat("/").concat(TmdbRestClient.DISCOVER_MOVIE)
                     .concat("?").concat(TmdbRestClient.API_KEY).concat("=")
