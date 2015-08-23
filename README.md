@@ -13,6 +13,10 @@ If you would, as a developer, like to use your own TheMovieDatabase API Key, ple
 TheMovieDatabase API: https://www.themoviedb.org/documentation/api
 Android Icons: https://developer.android.com/training/implementing-navigation/nav-drawer.html
 
+Libraries
+Picasso: http://square.github.io/picasso/
+AsyncHttpClient: http://loopj.com/android-async-http/
+
 ## License
 
 MIT License
