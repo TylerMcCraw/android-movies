@@ -36,13 +36,17 @@ public class MoviesHandler extends JsonHttpResponseHandler {
                     .concat("=").concat(TmdbRestClient.SORT_POPULARITY)
                     .concat(TmdbRestClient.SORT_DESC);
     // This resolves to the relative URL below to sort movies by popularity in descending order
-    // discover/movie?api_key=&sort_by=vote_average.desc"
+    // discover/movie?sort_by=vote_average.desc&vote_count.gte=50"
+    // We're assuming here that if a movie has had less than 50 total votes, then it's not worth
+    // including in this list
     public static final String MOVIES_RATING_DESC =
             TmdbRestClient.DISCOVER.concat("/").concat(TmdbRestClient.DISCOVER_MOVIE)
                     .concat("?").concat(TmdbRestClient.API_KEY).concat("=")
                     .concat(TmdbRestClient.TMDB_APIKEY).concat("&").concat(TmdbRestClient.SORT_BY)
                     .concat("=").concat(TmdbRestClient.SORT_RATING)
-                    .concat(TmdbRestClient.SORT_DESC);
+                    .concat(TmdbRestClient.SORT_DESC)
+                    .concat("&").concat(TmdbRestClient.SORT_VOTE_COUNT)
+                    .concat(TmdbRestClient.MODIFIER_GTE).concat("=50");
     public static final String MOVIES_PAGE = "page";
     // This is used for the scroll listener in MainActivityFragment to determine what
     // "page" of data should be returned from the TMDB API
@@ -70,6 +74,7 @@ public class MoviesHandler extends JsonHttpResponseHandler {
             for (int i = 0; i < results.length(); i++) {
                 Movie movie = new Movie();
                 JSONObject jsonMovie = results.getJSONObject(i);
+                movie.setId(jsonMovie.getString("id"));
                 movie.setTitle(jsonMovie.getString("original_title"));
                 movie.setDescription(jsonMovie.getString("overview"));
                 movie.setImageCode(jsonMovie.getString("poster_path"));

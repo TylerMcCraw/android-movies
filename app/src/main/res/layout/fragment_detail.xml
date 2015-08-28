@@ -98,16 +98,15 @@
                     android:textColor="@color/primary_text_default_material_light"
                     android:fontFamily="sans-serif-light"
                     android:textSize="20sp" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:minHeight="200dp"
+                    android:layout_below="@+id/detail_description_textview"
+                    android:layout_marginTop="@dimen/detail_fragment_rv_margintop"
+                    android:id="@+id/detail_rv_trailers" />
             </RelativeLayout>
-
-            <!--TODO: add section for trailers -->
-            <!--<LinearLayout-->
-                <!--android:layout_gravity="center"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:orientation="vertical">-->
-
-            <!--</LinearLayout>-->
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

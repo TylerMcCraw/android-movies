@@ -4,9 +4,14 @@
 
 package com.w3bshark.monolith.fragments;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,11 +23,19 @@ import com.squareup.picasso.Picasso;
 import com.w3bshark.monolith.R;
 import com.w3bshark.monolith.activities.DetailActivity;
 import com.w3bshark.monolith.model.Movie;
+import com.w3bshark.monolith.model.Trailer;
+import com.w3bshark.monolith.rest.TmdbRestClient;
+import com.w3bshark.monolith.rest.TrailersHandler;
+import com.w3bshark.monolith.widget.TrailersAdapter;
+
+import org.apache.http.Header;
+import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -42,6 +55,16 @@ public class DetailActivityFragment extends Fragment {
     private static final String IMG_HIGH_RES = "w342";
     // Movie parcelable key for saving instance state
     private static final String SAVED_MOVIE = "SAVED_MOVIE";
+    // YouTube url for opening YouTube links
+    private static final String YOUTUBE_BASE_URL = "http://www.youtube.com/watch?v=";
+    // Temporary instance of trailers for the selected movie
+    private ArrayList<Trailer> trailers;
+    // Our recycler view used to display trailers as card views
+    private RecyclerView mTrailersView;
+    // Adapter used to bind trailer data to our recycler view
+    private TrailersAdapter mTrailersAdapter;
+    // LayoutManager for handling layout of card views
+    private LinearLayoutManager mLayoutManager;
 
     public DetailActivityFragment() {
     }
@@ -67,7 +90,6 @@ public class DetailActivityFragment extends Fragment {
 
         // Inflate the fragment layout
         View detailFragment = inflater.inflate(R.layout.fragment_detail, container, false);
-        // If we weren't given the movie data, display an error message
         if (getActivity().getIntent() == null) {
             String snackMessage;
             snackMessage = getActivity().getApplicationContext().getString(R.string.error_unexpected);
@@ -77,6 +99,9 @@ public class DetailActivityFragment extends Fragment {
             if (selectedMovie == null) {
                 selectedMovie = getActivity().getIntent().getParcelableExtra(DetailActivity.EXTRASCURRENTMOVIE);
             }
+
+            setUpTrailersView(detailFragment, inflater, container);
+            retrieveTrailerData(selectedMovie.getId());
 
             // Title
             TextView titleView = (TextView) detailFragment.findViewById(R.id.detail_movie_title);
@@ -137,5 +162,77 @@ public class DetailActivityFragment extends Fragment {
         }
 
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    private void setUpTrailersView(View detailFragment, LayoutInflater inflater, ViewGroup container) {
+        // Set up the xml layout
+        mTrailersView = (RecyclerView) detailFragment.findViewById(R.id.detail_rv_trailers);
+
+        // Improves performance if changes in content do not change
+        // the layout size of the RecyclerView
+        mTrailersView.setHasFixedSize(true);
+
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mTrailersView.setLayoutManager(mLayoutManager);
+    }
+
+    /**
+     * Set up our TrailersAdapter to bind the data to the RecyclerView and handle
+     * user click of trailer (CardView) in the RecyclerView
+     */
+    private void initializeAdapter() {
+        // We must create the clicklistener here so that the adapter
+        // can bind the data with the element that is clicked
+        View.OnClickListener clickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int itemPosition = mTrailersView.getChildLayoutPosition(v);
+                try{
+                    // Open the Youtube app if it's available
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("vnd.youtube:" + trailers.get(itemPosition).getVideoPath()));
+                    startActivity(intent);
+                }catch (ActivityNotFoundException ex){
+                    // Otherwise, just open the youtube link in the default browser
+                    Intent intent=new Intent(Intent.ACTION_VIEW,
+                            Uri.parse(YOUTUBE_BASE_URL
+                                    .concat(trailers.get(itemPosition).getVideoPath())));
+                    startActivity(intent);
+                }
+            }
+        };
+
+        // Initialize the TrailersAdapter and bind trailers
+        mTrailersAdapter = new TrailersAdapter(getActivity(), trailers, clickListener);
+        mTrailersView.setAdapter(mTrailersAdapter);
+    }
+
+    private void retrieveTrailerData(String movieId) {
+        if (trailers == null) {
+            trailers = new ArrayList<>();
+        }
+
+        String getUrl = TrailersHandler.buildUrl(movieId);
+
+        // Fetch trailer data using our rest client and bind the data
+        TmdbRestClient.get(getUrl, null, new TrailersHandler() {
+            //TODO: handle deprecation: org.apache.http.Header is deprecated in API level 22
+            // https://github.com/loopj/android-async-http/issues/833
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                if (this.parseTrailers() != null && !this.parseTrailers().isEmpty()) {
+                    trailers.clear();
+                    // It is required to call addAll because this causes the
+                    // trailersadapter to realize that there is new data and to refresh the view
+                    trailers.addAll(this.parseTrailers());
+                }
+                if (mTrailersAdapter == null) {
+                    initializeAdapter();
+                } else {
+                    mTrailersAdapter.notifyDataSetChanged();
+                }
+            }
+        });
     }
 }

@@ -187,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
         }
         mNavDrawerItems.add(new DrawerItem(R.drawable.ic_action_sort_by_size, getString(R.string.nav_drawer_most_popular)));
         mNavDrawerItems.add(new DrawerItem(R.drawable.ic_action_sort_by_size, getString(R.string.nav_drawer_highest_rated)));
+        mNavDrawerItems.add(new DrawerItem(R.drawable.ic_bookmark_outline_plus, getString(R.string.nav_drawer_favorites)));
 
         //TODO: Add Settings screen back in for later use
 //        mNavDrawerItems.add(new DrawerItem(R.drawable.ic_action_settings, getString(R.string.nav_drawer_settings)));

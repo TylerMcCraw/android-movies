@@ -25,15 +25,18 @@ public class TmdbRestClient {
     // Further Terms of Use information can be found at
     //      https://www.themoviedb.org/documentation/api/terms-of-use
     // Replace your generated API key in TMDB_APIKEY below
-    public static final String TMDB_APIKEY = "";
+    public static final String TMDB_APIKEY = "b135eb044beeebb67df1a9b6ee3709cf";
 
     // API key words to be used for relative URL additions
     public static final String SORT_BY = "sort_by";
     public static final String SORT_POPULARITY = "popularity";
     public static final String SORT_RATING = "vote_average";
+    public static final String SORT_VOTE_COUNT = "vote_count";
     public static final String SORT_DESC = ".desc";
+    public static final String MODIFIER_GTE = ".gte";
     public static final String DISCOVER = "discover";
     public static final String DISCOVER_MOVIE = "movie";
+    public static final String VIDEOS = "videos";
 
     //TODO: Future enhancement? - add ability to view TV shows too?
 //    public static final String DISCOVER_TV = "tv";

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2015. Tyler McCraw
+  -->
+
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/detail_trailer_cv"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardPreventCornerOverlap="false">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/detail_trailer_cv_padding">
+        <ImageView
+            android:id="@+id/detail_trailer_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_play"
+            android:layout_marginStart="@dimen/detail_trailer_icon_marginstart"
+            android:layout_marginEnd="@dimen/detail_trailer_icon_marginend"/>
+        <TextView
+            android:id="@+id/detail_trailer_name"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_toEndOf="@+id/detail_trailer_icon"
+            android:gravity="center_vertical"
+            android:textColor="@color/primary_text_default_material_light"
+            android:fontFamily="sans-serif-light"
+            android:textSize="18sp" />
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

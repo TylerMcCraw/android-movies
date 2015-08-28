@@ -24,6 +24,7 @@
     <dimen name="detail_fragment_poster_height">232dp</dimen>
     <dimen name="detail_fragment_poster_marginend">6dp</dimen>
     <dimen name="detail_fragment_poster_marginbottom">24dp</dimen>
+    <dimen name="detail_fragment_rv_margintop">24dp</dimen>
 
     <!-- Navigation Drawer Item -->
     <dimen name="navdrawer_item_padding">10dp</dimen>
@@ -32,11 +33,16 @@
     <dimen name="navdrawer_item_text_paddingstart">0dp</dimen>
     <dimen name="navdrawer_item_text_paddingend">16dp</dimen>
 
-    <!-- RecyclerView Item -->
+    <!-- Main RecyclerView Item -->
     <dimen name="recycler_item_cv_margin">0dp</dimen>
     <dimen name="recycler_item_cv_padding">0dp</dimen>
     <dimen name="recycler_item_cv_cornerradius">0dp</dimen>
     <dimen name="recycler_item_cv_elevation">0dp</dimen>
     <dimen name="recycler_item_image_width">185dp</dimen>
     <dimen name="recycler_item_image_height">277dp</dimen>
+
+    <!-- Detail Trailers RecyclerView Item -->
+    <dimen name="detail_trailer_cv_padding">14dp</dimen>
+    <dimen name="detail_trailer_icon_marginend">16dp</dimen>
+    <dimen name="detail_trailer_icon_marginstart">6dp</dimen>
 </resources>

@@ -243,7 +243,7 @@ public class MainActivityFragment extends Fragment {
         else {
             getUrl = MoviesHandler.MOVIES_POPULARITY_DESC;
         }
-        // Fetch movie data our rest client and bind the data
+        // Fetch movie data using our rest client and bind the data
         TmdbRestClient.get(getUrl, null, new MoviesHandler() {
             //TODO: handle deprecation: org.apache.http.Header is deprecated in API level 22
             // https://github.com/loopj/android-async-http/issues/833

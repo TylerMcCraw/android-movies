@@ -4,6 +4,7 @@
 
 package com.w3bshark.monolith.model;
 
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -14,21 +15,25 @@ import android.os.Parcelable;
  */
 public class Movie implements Parcelable {
 
+    String id;
     String title;
     String description;
     String imageCode;
     Double voteAverage;
     String releaseDate;
+    Bundle trailers;
 
     public Movie() {
     }
 
     Movie(Parcel in) {
+        this.id = in.readString();
         this.title = in.readString();
         this.description = in.readString();
         this.imageCode = in.readString();
         this.voteAverage = in.readDouble();
         this.releaseDate = in.readString();
+        this.trailers = in.readBundle();
     }
 
     @Override
@@ -38,11 +43,13 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
         dest.writeString(title);
         dest.writeString(description);
         dest.writeString(imageCode);
         dest.writeDouble(voteAverage);
         dest.writeString(releaseDate);
+        dest.writeBundle(trailers);
     }
 
     public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
@@ -54,6 +61,14 @@ public class Movie implements Parcelable {
             return new Movie[size];
         }
     };
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;
@@ -93,5 +108,13 @@ public class Movie implements Parcelable {
 
     public void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
+    }
+
+    public Bundle getTrailers() {
+        return trailers;
+    }
+
+    public void setTrailers(Bundle trailers) {
+        this.trailers = trailers;
     }
 }
