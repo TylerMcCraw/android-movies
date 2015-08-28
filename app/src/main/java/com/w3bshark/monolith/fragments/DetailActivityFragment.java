@@ -7,6 +7,7 @@ package com.w3bshark.monolith.fragments;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -57,6 +58,9 @@ public class DetailActivityFragment extends Fragment {
     private static final String SAVED_MOVIE = "SAVED_MOVIE";
     // YouTube url for opening YouTube links
     private static final String YOUTUBE_BASE_URL = "http://www.youtube.com/watch?v=";
+
+    // Currently selected movie
+    private Movie selectedMovie;
     // Temporary instance of trailers for the selected movie
     private ArrayList<Trailer> trailers;
     // Our recycler view used to display trailers as card views
@@ -82,7 +86,6 @@ public class DetailActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        Movie selectedMovie = null;
         // Attempt to restore from savedInstanceState
         if (savedInstanceState != null) {
             selectedMovie = savedInstanceState.getParcelable(SAVED_MOVIE);
@@ -226,6 +229,14 @@ public class DetailActivityFragment extends Fragment {
                     // It is required to call addAll because this causes the
                     // trailersadapter to realize that there is new data and to refresh the view
                     trailers.addAll(this.parseTrailers());
+
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelableArrayList(Movie.MOVIE_TRAILERS, trailers);
+                    selectedMovie.setTrailers(bundle);
+                    if (trailers != null && trailers.size() >= 0) {
+                        DetailActivity activity = (DetailActivity) getActivity();
+                        activity.setShareIntent(getShareIntentForActivity(trailers.get(0).getVideoPath()));
+                    }
                 }
                 if (mTrailersAdapter == null) {
                     initializeAdapter();
@@ -234,5 +245,35 @@ public class DetailActivityFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private Intent getShareIntentForActivity(String videoPath) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+        // FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET was deprecated as of API 21
+        // This intent flag is important so that the activity is cleared from recent tasks
+        //  whenever the activity is finished/closed
+        if (currentapiVersion >= Build.VERSION_CODES.LOLLIPOP) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        } else {
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        }
+
+        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.detail_share_subject).concat(" ")
+                .concat(selectedMovie.getTitle()));
+
+        String sharedText = selectedMovie.getTitle();
+        // Build text for share provider
+        // includes youtube trailer of first trailer for selected movie
+        sharedText = sharedText
+                .concat(" - ")
+                .concat(YOUTUBE_BASE_URL.concat(videoPath))
+                .concat(" ")
+                .concat(getString(R.string.detail_share_hashtag));
+
+        intent.putExtra(Intent.EXTRA_TEXT, sharedText);
+
+        return intent;
     }
 }

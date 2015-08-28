@@ -22,6 +22,8 @@ public class Movie implements Parcelable {
     Double voteAverage;
     String releaseDate;
     Bundle trailers;
+    // Bundle key for storing trailers
+    public static final String MOVIE_TRAILERS = "MOVIE_TRAILERS";
 
     public Movie() {
     }

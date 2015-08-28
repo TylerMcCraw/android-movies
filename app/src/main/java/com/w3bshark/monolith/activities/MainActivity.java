@@ -172,6 +172,13 @@ public class MainActivity extends AppCompatActivity {
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 startActivity(settingsIntent);
                 break;
+//            case 3:
+//                // This is the Settings option
+//                mDrawerList.setItemChecked(position, false);
+//                mDrawerList.setItemChecked(selectedSort, true);
+//                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+//                startActivity(settingsIntent);
+//                break;
             default:
                 break;
         }
