@@ -177,6 +177,8 @@ public class DetailActivityFragment extends Fragment {
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mTrailersView.setLayoutManager(mLayoutManager);
+        // Set up initial adapter (until we retrieve our data) so there is no skipping the layout
+        mTrailersView.setAdapter(new TrailersAdapter(getActivity(), new ArrayList<Trailer>(), null));
     }
 
     /**

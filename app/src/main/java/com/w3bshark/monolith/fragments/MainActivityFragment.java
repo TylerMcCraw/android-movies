@@ -105,6 +105,8 @@ public class MainActivityFragment extends Fragment {
         }
         mLayoutManager.setExtraLayoutSpace(Util.getScreenHeight(getActivity()));
         mRecyclerView.setLayoutManager(mLayoutManager);
+        // Set up initial adapter (until we retrieve our data) so there is no skipping the layout
+        mRecyclerView.setAdapter(new RecyclerAdapter(getActivity(), new ArrayList<Movie>(), null));
 
         // Attempt to restore movie data from savedInstanceState
         if (savedInstanceState != null) {
