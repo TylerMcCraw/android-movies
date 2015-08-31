@@ -84,12 +84,20 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_item_bookmark) {
+            Movie selectedMovie = getIntent().getParcelableExtra(DetailActivity.EXTRASCURRENTMOVIE);
             if(item.isChecked()) {
                 item.setIcon(R.drawable.ic_bookmark_outline_plus);
                 item.setChecked(false);
+                if (selectedMovie != null) {
+                    removeMovieFromFavs();
+                }
             } else {
                 item.setIcon(R.drawable.bookmark_plus);
                 item.setChecked(true);
+
+                if (selectedMovie != null) {
+                    addMovietoFavs();
+                }
             }
             return true;
         }
@@ -115,17 +123,19 @@ public class DetailActivity extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         }
         Movie selectedMovie = getIntent().getParcelableExtra(DetailActivity.EXTRASCURRENTMOVIE);
-        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.detail_share_subject).concat(" ")
-                .concat(selectedMovie.getTitle()));
+        if (selectedMovie != null) {
+            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.detail_share_subject).concat(" ")
+                    .concat(selectedMovie.getTitle()));
 
-        // Build text for share provider
-        String sharedText = selectedMovie.getTitle()
-                .concat(" - ")
-                .concat(selectedMovie.getDescription())
-                .concat(" ")
-                .concat(getString(R.string.detail_share_hashtag));
+            // Build text for share provider
+            String sharedText = selectedMovie.getTitle()
+                    .concat(" - ")
+                    .concat(selectedMovie.getDescription())
+                    .concat(" ")
+                    .concat(getString(R.string.detail_share_hashtag));
 
-        intent.putExtra(Intent.EXTRA_TEXT, sharedText);
+            intent.putExtra(Intent.EXTRA_TEXT, sharedText);
+        }
         return intent;
     }
 }
