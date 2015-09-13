@@ -11,7 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,10 +23,14 @@ import com.squareup.picasso.Picasso;
 import com.w3bshark.monolith.R;
 import com.w3bshark.monolith.activities.DetailActivity;
 import com.w3bshark.monolith.model.Movie;
+import com.w3bshark.monolith.model.Review;
 import com.w3bshark.monolith.model.Trailer;
+import com.w3bshark.monolith.rest.ReviewsHandler;
 import com.w3bshark.monolith.rest.TmdbRestClient;
 import com.w3bshark.monolith.rest.TrailersHandler;
+import com.w3bshark.monolith.widget.ReviewsAdapter;
 import com.w3bshark.monolith.widget.TrailersAdapter;
+import com.w3bshark.monolith.widget.LinearLayoutManager;
 
 import org.apache.http.Header;
 import org.json.JSONObject;
@@ -68,11 +71,11 @@ public class DetailActivityFragment extends Fragment {
     // Adapter used to bind trailer data to our recycler view
     private TrailersAdapter mTrailersAdapter;
     //    // Temporary instance of trailers for the selected movie
-//    private ArrayList<Review> reviews;
+    private ArrayList<Review> reviews;
     // Our recycler view used to display trailers as card views
     private RecyclerView mReviewsView;
     //    // Adapter used to bind trailer data to our recycler view
-//    private TrailersAdapter mReviewsAdapter;
+    private ReviewsAdapter mReviewsAdapter;
     // LayoutManager for handling layout of card views
     private LinearLayoutManager mLayoutManager;
 
@@ -113,8 +116,8 @@ public class DetailActivityFragment extends Fragment {
             setUpTrailersView(detailFragment, inflater, container);
             retrieveTrailerData(selectedMovie.getMovieId());
 
-//            setUpReviewsView(detailFragment, inflater, container);
-//            retrieveReviewsData(selectedMovie.getMovieId());
+            setUpReviewsView(detailFragment, inflater, container);
+            retrieveReviewsData(selectedMovie.getMovieId());
 
             // Title
             TextView titleView = (TextView) detailFragment.findViewById(R.id.detail_movie_title);
@@ -200,13 +203,13 @@ public class DetailActivityFragment extends Fragment {
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mReviewsView.setLayoutManager(mLayoutManager);
-//        // Set up initial adapter (until we retrieve our data) so there is no skipping the layout
-//        mReviewsView.setAdapter(new TrailersAdapter(getActivity(), new ArrayList<Trailer>(), null));
+        // Set up initial adapter (until we retrieve our data) so there is no skipping the layout
+        mReviewsView.setAdapter(new ReviewsAdapter(getActivity(), new ArrayList<Review>(), null));
     }
 
     /**
-     * Set up our TrailersAdapter to bind the data to the RecyclerView and handle
-     * user click of trailer (CardView) in the RecyclerView
+     * Set up our TrailersAdapter and ReviewsAdapter to bind the data to the RecyclerView
+     * and handle user click of trailer (CardView) in the RecyclerView
      */
     private void initializeAdapter() {
         // We must create the clicklistener here so that the adapter
@@ -233,6 +236,10 @@ public class DetailActivityFragment extends Fragment {
         // Initialize the TrailersAdapter and bind trailers
         mTrailersAdapter = new TrailersAdapter(getActivity(), trailers, clickListener);
         mTrailersView.setAdapter(mTrailersAdapter);
+
+        // Initialize the ReviewsAdapter and bind trailers
+        mReviewsAdapter = new ReviewsAdapter(getActivity(), reviews, null);
+        mReviewsView.setAdapter(mReviewsAdapter);
     }
 
     private void retrieveTrailerData(String movieId) {
@@ -267,6 +274,38 @@ public class DetailActivityFragment extends Fragment {
                     initializeAdapter();
                 } else {
                     mTrailersAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+    }
+    private void retrieveReviewsData(String movieId) {
+        if (reviews == null) {
+            reviews = new ArrayList<>();
+        }
+
+        String getUrl = ReviewsHandler.buildUrl(movieId);
+
+        // Fetch review data using our rest client and bind the data
+        TmdbRestClient.get(getUrl, null, new ReviewsHandler() {
+            //TODO: handle deprecation: org.apache.http.Header is deprecated in API level 22
+            // https://github.com/loopj/android-async-http/issues/833
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                if (this.parseReviews() != null && !this.parseReviews().isEmpty()) {
+                    reviews.clear();
+                    // It is required to call addAll because this causes the
+                    // reviewsadapter to realize that there is new data and to refresh the view
+                    reviews.addAll(this.parseReviews());
+
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelableArrayList(Movie.MOVIE_REVIEWS, reviews);
+                    selectedMovie.setReviews(bundle);
+                }
+                if (mReviewsAdapter == null) {
+                    initializeAdapter();
+                } else {
+                    mReviewsAdapter.notifyDataSetChanged();
                 }
             }
         });

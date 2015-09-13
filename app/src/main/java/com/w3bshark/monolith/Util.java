@@ -32,7 +32,8 @@ public class Util {
 
     /**
      * Returns the whether or not the application has
-     *  network connectivity
+     * network connectivity
+     *
      * @param context application context
      * @return true if app has network connectivity
      */

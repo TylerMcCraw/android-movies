@@ -79,7 +79,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
     }
 
     /**
-     * Set the item count to the count of the trailers
+     * Set the item count to the count of the reviews
      *
      * @return the count of items in the Trailers RecyclerView
      */

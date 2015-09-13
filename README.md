@@ -17,6 +17,7 @@ Material Design Icons: https://materialdesignicons.com/
 Lots of help from these projects:
 Custom Loader class: https://github.com/alexjlockwood/AppListLoader
 Pre-cache views for RecyclerView: https://androiddevx.wordpress.com/2014/12/05/recycler-view-pre-cache-views/
+Custom LinearLayoutManager: https://github.com/serso/android-linear-layout-manager
 
 Libraries
 Picasso: http://square.github.io/picasso/

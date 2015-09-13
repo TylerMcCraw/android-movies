@@ -37,6 +37,7 @@ public class TmdbRestClient {
     public static final String DISCOVER = "discover";
     public static final String DISCOVER_MOVIE = "movie";
     public static final String VIDEOS = "videos";
+    public static final String REVIEWS = "reviews";
 
     //TODO: Future enhancement? - add ability to view TV shows too?
 //    public static final String DISCOVER_TV = "tv";

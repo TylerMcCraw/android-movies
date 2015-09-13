@@ -27,6 +27,9 @@ public class Movie implements Parcelable {
     Bundle trailers;
     // Bundle key for storing trailers
     public static final String MOVIE_TRAILERS = "MOVIE_TRAILERS";
+    Bundle reviews;
+    // Bundle key for storing reviews
+    public static final String MOVIE_REVIEWS = "MOVIE_REVIEWS";
 
     public Movie() {
     }
@@ -41,6 +44,7 @@ public class Movie implements Parcelable {
         this.releaseDate = in.readString();
         this.favorite = in.readString();
         this.trailers = in.readBundle();
+        this.reviews = in.readBundle();
     }
 
     @Override
@@ -59,6 +63,7 @@ public class Movie implements Parcelable {
         dest.writeString(releaseDate);
         dest.writeString(favorite);
         dest.writeBundle(trailers);
+        dest.writeBundle(reviews);
     }
 
     public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
@@ -141,5 +146,13 @@ public class Movie implements Parcelable {
 
     public void setTrailers(Bundle trailers) {
         this.trailers = trailers;
+    }
+
+    public Bundle getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(Bundle reviews) {
+        this.reviews = reviews;
     }
 }

@@ -7,7 +7,7 @@ package com.w3bshark.monolith.rest;
 import android.util.Log;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.w3bshark.monolith.model.Trailer;
+import com.w3bshark.monolith.model.Review;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
@@ -16,20 +16,20 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class TrailersHandler extends JsonHttpResponseHandler {
+public class ReviewsHandler extends JsonHttpResponseHandler {
 
     // Log tag to keep track of logs created against this class
-    private static final String LOG_TAG = TrailersHandler.class.getSimpleName();
-    // This resolves to the relative URL below to retrieve trailer videos for a specific movie
-    // movie/<MOVIE ID GOES HERE>/videos"
-    public static final String TRAILERS =
+    private static final String LOG_TAG = ReviewsHandler.class.getSimpleName();
+    // This resolves to the relative URL below to retrieve reviews for a specific movie
+    // movie/<MOVIE ID GOES HERE>/reviews"
+    public static final String REVIEWS =
             TmdbRestClient.DISCOVER_MOVIE.concat("/");
-    private ArrayList<Trailer> trailers;
+    private ArrayList<Review> reviews;
     private String errorMessage;
 
     /**
      * Handle successful response from the request
-     * Add trailers data from response JSON to trailers array list
+     * Add reviews data from response JSON to reviews array list
      *
      * @param statusCode http response status line
      * @param headers    response headers if any
@@ -44,14 +44,14 @@ public class TrailersHandler extends JsonHttpResponseHandler {
             if (results == null || results.length() == 0) {
                 return;
             }
-            trailers = new ArrayList<>();
+            reviews = new ArrayList<>();
             for (int i = 0; i < results.length(); i++) {
-                Trailer trailer = new Trailer();
-                JSONObject jsonTrailer = results.getJSONObject(i);
-                trailer.setName(jsonTrailer.getString("name"));
-                trailer.setVideoPath(jsonTrailer.getString("key"));
-                trailer.setVideoSite(jsonTrailer.getString("site"));
-                trailers.add(trailer);
+                Review review = new Review();
+                JSONObject jsonReview = results.getJSONObject(i);
+                review.setId(jsonReview.getString("id"));
+                review.setAuthor(jsonReview.getString("author"));
+                review.setContent(jsonReview.getString("content"));
+                reviews.add(review);
             }
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage());
@@ -83,17 +83,17 @@ public class TrailersHandler extends JsonHttpResponseHandler {
     }
 
     /**
-     * Handle custom transformation of trailers data
+     * Handle custom transformation of reviews data
      *
-     * @return arraylist of trailers
+     * @return arraylist of reviews
      */
-    public ArrayList<Trailer> parseTrailers() {
-        return trailers;
+    public ArrayList<Review> parseReviews() {
+        return reviews;
     }
 
     public static String buildUrl(String movieId) {
-        return TRAILERS.concat(movieId)
-                .concat("/").concat(TmdbRestClient.VIDEOS)
+        return REVIEWS.concat(movieId)
+                .concat("/").concat(TmdbRestClient.REVIEWS)
                 .concat("?")
                 .concat(TmdbRestClient.API_KEY).concat("=").concat(TmdbRestClient.TMDB_APIKEY);
     }
