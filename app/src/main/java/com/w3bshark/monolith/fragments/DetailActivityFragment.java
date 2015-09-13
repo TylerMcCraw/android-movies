@@ -111,10 +111,10 @@ public class DetailActivityFragment extends Fragment {
             }
 
             setUpTrailersView(detailFragment, inflater, container);
-            retrieveTrailerData(selectedMovie.getId());
+            retrieveTrailerData(selectedMovie.getMovieId());
 
 //            setUpReviewsView(detailFragment, inflater, container);
-//            retrieveReviewsData(selectedMovie.getId());
+//            retrieveReviewsData(selectedMovie.getMovieId());
 
             // Title
             TextView titleView = (TextView) detailFragment.findViewById(R.id.detail_movie_title);

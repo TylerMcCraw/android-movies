@@ -8,6 +8,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -257,8 +258,36 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             @Override
             public void onClick(View v) {
                 int itemPosition = mRecyclerView.getChildLayoutPosition(v);
+                // We must pull the most recent data for the selected movie from the database
+                //  in case it has been updated to be a "favorite"
+                String[] selectionArgs = new String[]{movies.get(itemPosition).getMovieId()};
+                Cursor cursor = getContext().getContentResolver().query(
+                        MovieEntry.CONTENT_URI,
+                        MovieLoader.MOVIES_COLUMNS,
+                        MovieEntry.COLUMN_MOVIE_ID + " = ? ",
+                        selectionArgs,
+                        null);
+                Movie selectedMovie = null;
+                if (cursor.moveToFirst()) {
+                    selectedMovie = new Movie();
+                    selectedMovie.setMovieId(cursor.getString(MovieLoader.COL_MOVIE_ID));
+                    selectedMovie.setTitle(cursor.getString(MovieLoader.COL_MOVIE_TITLE));
+                    selectedMovie.setDescription(cursor.getString(MovieLoader.COL_MOVIE_DESCR));
+                    selectedMovie.setImageCode(cursor.getString(MovieLoader.COL_MOVIE_IMAGE_CODE));
+                    selectedMovie.setReleaseDate(cursor.getString(MovieLoader.COL_MOVIE_RELEASE_DATE));
+                    selectedMovie.setPopularity(cursor.getLong(MovieLoader.COL_MOVIE_POPULARITY));
+                    selectedMovie.setVoteAverage(cursor.getDouble(MovieLoader.COL_MOVIE_VOTE_AVG));
+                    selectedMovie.setFavorite(cursor.getString(MovieLoader.COL_MOVIE_FAVORITE));
+                }
+                cursor.close();
+
+                // If, for whatever reason, we couldn't retrieve the movie from the DB,
+                //  then, just use the movie from in-memory
+                if (selectedMovie == null) {
+                    selectedMovie = movies.get(itemPosition);
+                }
                 Intent detailIntent = new Intent(getActivity(), DetailActivity.class)
-                        .putExtra(DetailActivity.EXTRASCURRENTMOVIE, movies.get(itemPosition));
+                        .putExtra(DetailActivity.EXTRASCURRENTMOVIE, selectedMovie);
                 startActivity(detailIntent);
             }
         };

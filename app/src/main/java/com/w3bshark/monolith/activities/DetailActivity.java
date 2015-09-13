@@ -4,6 +4,7 @@
 
 package com.w3bshark.monolith.activities;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,8 +16,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.w3bshark.monolith.R;
+import com.w3bshark.monolith.data.MovieContract.MovieEntry;
 import com.w3bshark.monolith.fragments.DetailActivityFragment;
 import com.w3bshark.monolith.model.Movie;
+
+import java.util.GregorianCalendar;
 
 /**
  * An AppCompatActivity that presents movie details to the user for a specific
@@ -70,10 +74,18 @@ public class DetailActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_detail, menu);
 
+        Movie selectedMovie = getIntent().getParcelableExtra(DetailActivity.EXTRASCURRENTMOVIE);
+        if (selectedMovie.getFavorite() != null && !selectedMovie.getFavorite().isEmpty()) {
+            //Locate MenuItem for Favorite/Bookmark button
+            MenuItem favItem = menu.findItem(R.id.menu_item_bookmark);
+            favItem.setIcon(R.drawable.bookmark_plus);
+            favItem.setChecked(true);
+        }
+
         // Locate MenuItem with ShareActionProvider
-        MenuItem item = menu.findItem(R.id.menu_item_share);
+        MenuItem shareItem = menu.findItem(R.id.menu_item_share);
         // Fetch and store ShareActionProvider
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
 
         if (mShareActionProvider != null) {
             mShareActionProvider.setShareIntent(getDefaultShareIntent());
@@ -92,20 +104,43 @@ public class DetailActivity extends AppCompatActivity {
                 item.setIcon(R.drawable.ic_bookmark_outline_plus);
                 item.setChecked(false);
                 if (selectedMovie != null) {
-//                    removeMovieFromFavs();
+                    removeMovieFromFavs(selectedMovie);
                 }
             } else {
                 item.setIcon(R.drawable.bookmark_plus);
                 item.setChecked(true);
 
                 if (selectedMovie != null) {
-//                    addMovietoFavs();
+                    addMovieToFavs(selectedMovie);
                 }
             }
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public int removeMovieFromFavs(Movie selectedMovie) {
+        String[] selectionArgs = new String[]{selectedMovie.getMovieId()};
+        return getContentResolver().delete(
+                MovieEntry.CONTENT_URI,
+                MovieEntry.COLUMN_MOVIE_ID + " = ? ",
+                selectionArgs
+        );
+    }
+
+    public int addMovieToFavs(Movie selectedMovie) {
+        // Update a movie to mark it as a favorite
+        ContentValues contentValues = new ContentValues();
+        GregorianCalendar cal = new GregorianCalendar();
+        contentValues.put(MovieEntry.COLUMN_FAVORITE, cal.getTimeInMillis());
+        String[] selectionArgs = new String[]{selectedMovie.getMovieId()};
+        return getContentResolver().update(
+                MovieEntry.CONTENT_URI,
+                contentValues,
+                MovieEntry.COLUMN_MOVIE_ID + " = ? ",
+                selectionArgs
+        );
     }
 
     /**

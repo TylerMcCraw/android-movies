@@ -80,7 +80,7 @@ public class MoviesHandler extends JsonHttpResponseHandler {
             for (int i = 0; i < results.length(); i++) {
                 Movie movie = new Movie();
                 JSONObject jsonMovie = results.getJSONObject(i);
-                movie.setId(jsonMovie.getString("id"));
+                movie.setMovieId(jsonMovie.getString("id"));
                 movie.setTitle(jsonMovie.getString("original_title"));
                 movie.setDescription(jsonMovie.getString("overview"));
                 movie.setImageCode(jsonMovie.getString("poster_path"));

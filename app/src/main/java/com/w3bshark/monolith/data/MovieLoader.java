@@ -27,7 +27,7 @@ public class MovieLoader extends AsyncTaskLoader<ArrayList<Movie>> {
 
     // For the movies view we're showing only a small subset of the stored data.
     // Specify the columns we need.
-    private static final String[] MOVIES_COLUMNS = {
+    public static final String[] MOVIES_COLUMNS = {
             MovieEntry.TABLE_NAME + "." + MovieEntry._ID,
             MovieEntry.COLUMN_MOVIE_ID,
             MovieEntry.COLUMN_TITLE,
@@ -85,7 +85,7 @@ public class MovieLoader extends AsyncTaskLoader<ArrayList<Movie>> {
         if (cursor.moveToFirst()) {
             do {
                 Movie m = new Movie();
-                m.setId(cursor.getString(COL_MOVIE_ID));
+                m.setMovieId(cursor.getString(COL_MOVIE_ID));
                 m.setTitle(cursor.getString(COL_MOVIE_TITLE));
                 m.setDescription(cursor.getString(COL_MOVIE_DESCR));
                 m.setImageCode(cursor.getString(COL_MOVIE_IMAGE_CODE));
