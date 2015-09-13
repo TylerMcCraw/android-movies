@@ -14,7 +14,7 @@ import android.util.AttributeSet;
  * recycler view in MainActivityFragment
  * Use of this design was based on:
  * <a href:"https://androiddevx.wordpress.com/2014/12/05/recycler-view-pre-cache-views/">
- *     "Recycler View - pre-cache views" by Ovidiu</a>
+ * "Recycler View - pre-cache views" by Ovidiu</a>
  */
 public class PreCachingGridLayoutManager extends GridLayoutManager {
 

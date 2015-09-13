@@ -7,6 +7,8 @@
     package="com.w3bshark.monolith" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- We're using this perm to check whether or not user has an active network connection -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -38,6 +40,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
+        <provider
+            android:authorities="com.w3bshark.monolith"
+            android:name=".data.MovieProvider"
+            android:readPermission="true"
+            android:writePermission="false"
+            android:exported="false"
+            android:syncable="true" />
     </application>
 
 </manifest>

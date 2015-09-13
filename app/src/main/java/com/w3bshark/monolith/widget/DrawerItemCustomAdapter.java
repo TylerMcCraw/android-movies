@@ -50,9 +50,10 @@ public class DrawerItemCustomAdapter extends ArrayAdapter<DrawerItem> {
 
     /**
      * Bind the data with the navigation drawer item view
-     * @param position the position number of the item in the navigation drawer
+     *
+     * @param position    the position number of the item in the navigation drawer
      * @param convertView the view of the navigation drawer item
-     * @param parent the parent view of the navigation drawer item
+     * @param parent      the parent view of the navigation drawer item
      * @return the manipulated view of the navigation drawer item
      */
     @Override
@@ -66,8 +67,7 @@ public class DrawerItemCustomAdapter extends ArrayAdapter<DrawerItem> {
 
             holder = new DrawerItemViewHolder(drawerItem);
             drawerItem.setTag(holder);
-        }
-        else {
+        } else {
             // If the view already exists, then get the holder instance from the view
             holder = (DrawerItemViewHolder) drawerItem.getTag();
         }

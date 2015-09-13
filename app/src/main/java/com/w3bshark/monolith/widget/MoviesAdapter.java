@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Adapter for binding data to RecyclerView used in MainActivityFragment
  */
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MovieViewHolder> {
+public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
 
     // Base URL for all images hosted on TMDB
     private static final String BASE_IMG_URL = "http://image.tmdb.org/t/p/";
@@ -48,7 +48,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MovieV
     List<Movie> movies;
     View.OnClickListener clickListener;
 
-    public RecyclerAdapter(Context context, List<Movie> movies, View.OnClickListener clickListener) {
+    public MoviesAdapter(Context context, List<Movie> movies, View.OnClickListener clickListener) {
         this.context = context;
         this.movies = movies;
         this.clickListener = clickListener;
@@ -64,8 +64,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MovieV
     /**
      * Bind movie data to the view holder for RecyclerView and set the
      * click listener to each card view so that user can select an individual movie view
+     *
      * @param movieViewHolder the view holder for binding data
-     * @param i the position of the view holder in the RecyclerView
+     * @param i               the position of the view holder in the RecyclerView
      */
     @Override
     public void onBindViewHolder(MovieViewHolder movieViewHolder, int i) {
@@ -94,6 +95,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MovieV
 
     /**
      * Set the item count to the count of the movies array list
+     *
      * @return the count of items in the RecyclerView
      */
     @Override

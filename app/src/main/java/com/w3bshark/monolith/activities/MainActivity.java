@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.facebook.stetho.Stetho;
 import com.w3bshark.monolith.R;
 import com.w3bshark.monolith.fragments.MainActivityFragment;
 import com.w3bshark.monolith.model.DrawerItem;
@@ -44,13 +45,16 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     // Toggle for keeping track of action bar nav drawer state
     private ActionBarDrawerToggle mDrawerToggle;
+
     // Enum for keeping track of available sorts
     public enum SortType {
         MostPopular("MP"), HighestRated("HR");
         private String sortType;
+
         SortType(String s) {
             sortType = s;
         }
+
         public String getSortType() {
             return sortType;
         }
@@ -58,10 +62,15 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Handle creation of the movie list activity, navigation drawer, and the activity's fragment
+     *
      * @param savedInstanceState instance state of the application activity
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        // TODO: Comment this out when releasing the app
+        Stetho.initializeWithDefaults(this);
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
@@ -82,10 +91,9 @@ public class MainActivity extends AppCompatActivity {
         String userSortPref = settings.getString(PREF_SORT, defValPref);
         if (userSortPref.isEmpty() || userSortPref.equals(SortType.MostPopular.getSortType())) {
             SharedPreferences.Editor preferenceEditor = settings.edit();
-            preferenceEditor.putString(PREF_SORT,SortType.MostPopular.getSortType());
+            preferenceEditor.putString(PREF_SORT, SortType.MostPopular.getSortType());
             selectedSort = 0;
-        }
-        else {
+        } else {
             selectedSort = 1;
         }
         mDrawerList.setItemChecked(selectedSort, true);
@@ -144,11 +152,12 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Handle user selection of navigation drawer items
+     *
      * @param position the position number of the selected item
      */
     private void selectItem(int position) {
         MainActivityFragment fragment;
-        switch(position) {
+        switch (position) {
             case 0:
                 // This is the Sort By "Most Popular" option
                 // Highlight the selected item

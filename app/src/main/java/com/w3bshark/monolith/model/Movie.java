@@ -19,8 +19,11 @@ public class Movie implements Parcelable {
     String title;
     String description;
     String imageCode;
+    long popularity;
     Double voteAverage;
     String releaseDate;
+    // favorite will be stored as a string of a date for when the movie was favorited
+    String favorite;
     Bundle trailers;
     // Bundle key for storing trailers
     public static final String MOVIE_TRAILERS = "MOVIE_TRAILERS";
@@ -33,8 +36,10 @@ public class Movie implements Parcelable {
         this.title = in.readString();
         this.description = in.readString();
         this.imageCode = in.readString();
+        this.popularity = in.readLong();
         this.voteAverage = in.readDouble();
         this.releaseDate = in.readString();
+        this.favorite = in.readString();
         this.trailers = in.readBundle();
     }
 
@@ -49,8 +54,10 @@ public class Movie implements Parcelable {
         dest.writeString(title);
         dest.writeString(description);
         dest.writeString(imageCode);
+        dest.writeLong(popularity);
         dest.writeDouble(voteAverage);
         dest.writeString(releaseDate);
+        dest.writeString(favorite);
         dest.writeBundle(trailers);
     }
 
@@ -96,6 +103,14 @@ public class Movie implements Parcelable {
         this.imageCode = imageCode;
     }
 
+    public long getPopularity() {
+        return popularity;
+    }
+
+    public void setPopularity(long popularity) {
+        this.popularity = popularity;
+    }
+
     public Double getVoteAverage() {
         return voteAverage;
     }
@@ -110,6 +125,14 @@ public class Movie implements Parcelable {
 
     public void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
+    }
+
+    public String getFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(String favorite) {
+        this.favorite = favorite;
     }
 
     public Bundle getTrailers() {

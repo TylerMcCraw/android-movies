@@ -4,9 +4,11 @@
 
 package com.w3bshark.monolith.rest;
 
+import android.content.ContentValues;
 import android.util.Log;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.w3bshark.monolith.data.MovieContract.MovieEntry;
 import com.w3bshark.monolith.model.Movie;
 
 import org.apache.http.Header;
@@ -15,13 +17,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Custom HTTP response handler class specifically for handling
  * transforming REST responses to/from TMDB's "discover" API for movies
  * See <a href="https://www.themoviedb.org/documentation/api"> TMDB API </a>
- *     and <a href="http://docs.themoviedb.apiary.io/#reference/discover/discovermovie/get">
- *         TMDB Discover API on Apiary </a>
+ * and <a href="http://docs.themoviedb.apiary.io/#reference/discover/discovermovie/get">
+ * TMDB Discover API on Apiary </a>
  */
 public class MoviesHandler extends JsonHttpResponseHandler {
 
@@ -52,11 +55,13 @@ public class MoviesHandler extends JsonHttpResponseHandler {
     // "page" of data should be returned from the TMDB API
     public static final String MOVIES_ADDPAGE = "&".concat(MOVIES_PAGE).concat("=");
     private ArrayList<Movie> movies;
+    private Vector<ContentValues> moviesValuesVector = null;
     private String errorMessage;
 
     /**
      * Handle successful response from the request
      * Add movie data from response JSON to movies array list
+     *
      * @param statusCode http response status line
      * @param headers    response headers if any
      * @param response   parsed response if any
@@ -71,6 +76,7 @@ public class MoviesHandler extends JsonHttpResponseHandler {
                 return;
             }
             movies = new ArrayList<>();
+            moviesValuesVector = new Vector<>(results.length());
             for (int i = 0; i < results.length(); i++) {
                 Movie movie = new Movie();
                 JSONObject jsonMovie = results.getJSONObject(i);
@@ -78,9 +84,22 @@ public class MoviesHandler extends JsonHttpResponseHandler {
                 movie.setTitle(jsonMovie.getString("original_title"));
                 movie.setDescription(jsonMovie.getString("overview"));
                 movie.setImageCode(jsonMovie.getString("poster_path"));
+                movie.setPopularity(jsonMovie.getLong("popularity"));
                 movie.setVoteAverage(jsonMovie.getDouble("vote_average"));
                 movie.setReleaseDate(jsonMovie.getString("release_date"));
                 movies.add(movie);
+
+                ContentValues moviesValues = new ContentValues();
+
+                moviesValues.put(MovieEntry.COLUMN_MOVIE_ID, jsonMovie.getString("id"));
+                moviesValues.put(MovieEntry.COLUMN_TITLE, jsonMovie.getString("original_title"));
+                moviesValues.put(MovieEntry.COLUMN_DESCR, jsonMovie.getString("overview"));
+                moviesValues.put(MovieEntry.COLUMN_IMAGE_CODE, jsonMovie.getString("poster_path"));
+                moviesValues.put(MovieEntry.COLUMN_POPULARITY, jsonMovie.getDouble("popularity"));
+                moviesValues.put(MovieEntry.COLUMN_VOTE_AVG, jsonMovie.getDouble("vote_average"));
+                moviesValues.put(MovieEntry.COLUMN_RELEASE_DATE, jsonMovie.getString("release_date"));
+
+                moviesValuesVector.add(moviesValues);
             }
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage());
@@ -89,6 +108,7 @@ public class MoviesHandler extends JsonHttpResponseHandler {
 
     /**
      * Handle failed response from the request
+     *
      * @param statusCode    http response status line
      * @param headers       response headers if any
      * @param throwable     throwable describing the way request failed
@@ -112,9 +132,14 @@ public class MoviesHandler extends JsonHttpResponseHandler {
 
     /**
      * Handle custom transformation of movie data
+     *
      * @return array list of movies
      */
     public ArrayList<Movie> parseMovies() {
         return movies;
+    }
+
+    public Vector<ContentValues> getMoviesVector() {
+        return moviesValuesVector;
     }
 }

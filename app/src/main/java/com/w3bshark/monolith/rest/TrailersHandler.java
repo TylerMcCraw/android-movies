@@ -30,6 +30,7 @@ public class TrailersHandler extends JsonHttpResponseHandler {
     /**
      * Handle successful response from the request
      * Add movie data from response JSON to trailers array list
+     *
      * @param statusCode http response status line
      * @param headers    response headers if any
      * @param response   parsed response if any
@@ -59,6 +60,7 @@ public class TrailersHandler extends JsonHttpResponseHandler {
 
     /**
      * Handle failed response from the request
+     *
      * @param statusCode    http response status line
      * @param headers       response headers if any
      * @param throwable     throwable describing the way request failed
@@ -82,6 +84,7 @@ public class TrailersHandler extends JsonHttpResponseHandler {
 
     /**
      * Handle custom transformation of movie data
+     *
      * @return hashmap of trailers (map of name to youtube video link path)
      */
     public ArrayList<Trailer> parseTrailers() {

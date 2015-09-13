@@ -34,6 +34,7 @@ public class DetailActivity extends AppCompatActivity {
 
     /**
      * Set up the fragment for displaying the movie details
+     *
      * @param savedInstanceState the instancestate of the app
      */
     @Override
@@ -49,6 +50,7 @@ public class DetailActivity extends AppCompatActivity {
 
     /**
      * Call to update the share intent for custom use
+     *
      * @param shareIntent the intent used by the shareactionprovider
      */
     public void setShareIntent(Intent shareIntent) {
@@ -59,6 +61,7 @@ public class DetailActivity extends AppCompatActivity {
 
     /**
      * Overridden method to display the share action button in the options menu
+     *
      * @param menu the options menu
      * @return boolean - if options were created for the menu
      */
@@ -85,18 +88,18 @@ public class DetailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_item_bookmark) {
             Movie selectedMovie = getIntent().getParcelableExtra(DetailActivity.EXTRASCURRENTMOVIE);
-            if(item.isChecked()) {
+            if (item.isChecked()) {
                 item.setIcon(R.drawable.ic_bookmark_outline_plus);
                 item.setChecked(false);
                 if (selectedMovie != null) {
-                    removeMovieFromFavs();
+//                    removeMovieFromFavs();
                 }
             } else {
                 item.setIcon(R.drawable.bookmark_plus);
                 item.setChecked(true);
 
                 if (selectedMovie != null) {
-                    addMovietoFavs();
+//                    addMovietoFavs();
                 }
             }
             return true;
@@ -108,6 +111,7 @@ public class DetailActivity extends AppCompatActivity {
     /**
      * Sets up and returns the default share intent for allowing the user to share
      * the selected movie
+     *
      * @return the share intent
      */
     private Intent getDefaultShareIntent() {

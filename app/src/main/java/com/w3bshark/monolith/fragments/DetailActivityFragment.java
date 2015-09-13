@@ -15,7 +15,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -68,6 +67,12 @@ public class DetailActivityFragment extends Fragment {
     private RecyclerView mTrailersView;
     // Adapter used to bind trailer data to our recycler view
     private TrailersAdapter mTrailersAdapter;
+    //    // Temporary instance of trailers for the selected movie
+//    private ArrayList<Review> reviews;
+    // Our recycler view used to display trailers as card views
+    private RecyclerView mReviewsView;
+    //    // Adapter used to bind trailer data to our recycler view
+//    private TrailersAdapter mReviewsAdapter;
     // LayoutManager for handling layout of card views
     private LinearLayoutManager mLayoutManager;
 
@@ -77,8 +82,9 @@ public class DetailActivityFragment extends Fragment {
     /**
      * Handle creation of fragment view, assign proper data to elements of view, and handle
      * uncaught exceptions in displaying data from adapter
-     * @param inflater used for inflating the xml layout
-     * @param container view to inflate the xml layout into
+     *
+     * @param inflater           used for inflating the xml layout
+     * @param container          view to inflate the xml layout into
      * @param savedInstanceState instance state of the application activity
      * @return main view displayed in the fragment
      */
@@ -98,7 +104,7 @@ public class DetailActivityFragment extends Fragment {
             String snackMessage;
             snackMessage = getActivity().getApplicationContext().getString(R.string.error_unexpected);
             Snackbar.make(this.getView(), snackMessage, Snackbar.LENGTH_SHORT).show();
-        // Otherwise, load the movie data into each corresponding fragment view
+            // Otherwise, load the movie data into each corresponding fragment view
         } else {
             if (selectedMovie == null) {
                 selectedMovie = getActivity().getIntent().getParcelableExtra(DetailActivity.EXTRASCURRENTMOVIE);
@@ -106,6 +112,9 @@ public class DetailActivityFragment extends Fragment {
 
             setUpTrailersView(detailFragment, inflater, container);
             retrieveTrailerData(selectedMovie.getId());
+
+//            setUpReviewsView(detailFragment, inflater, container);
+//            retrieveReviewsData(selectedMovie.getId());
 
             // Title
             TextView titleView = (TextView) detailFragment.findViewById(R.id.detail_movie_title);
@@ -139,8 +148,7 @@ public class DetailActivityFragment extends Fragment {
             Date convertedDate = new Date();
             try {
                 convertedDate = tmdbFormat.parse(selectedMovie.getReleaseDate());
-            }
-            catch (ParseException e) {
+            } catch (ParseException e) {
                 // If we couldn't parse the date for whatever reason, log it.
                 Log.e(LOG_TAG, e.getMessage());
             }
@@ -182,6 +190,20 @@ public class DetailActivityFragment extends Fragment {
         mTrailersView.setAdapter(new TrailersAdapter(getActivity(), new ArrayList<Trailer>(), null));
     }
 
+    private void setUpReviewsView(View detailFragment, LayoutInflater inflater, ViewGroup container) {
+        // Set up the xml layout
+        mReviewsView = (RecyclerView) detailFragment.findViewById(R.id.detail_rv_reviews);
+
+        // Improves performance if changes in content do not change
+        // the layout size of the RecyclerView
+        mReviewsView.setHasFixedSize(true);
+
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mReviewsView.setLayoutManager(mLayoutManager);
+//        // Set up initial adapter (until we retrieve our data) so there is no skipping the layout
+//        mReviewsView.setAdapter(new TrailersAdapter(getActivity(), new ArrayList<Trailer>(), null));
+    }
+
     /**
      * Set up our TrailersAdapter to bind the data to the RecyclerView and handle
      * user click of trailer (CardView) in the RecyclerView
@@ -193,14 +215,14 @@ public class DetailActivityFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 int itemPosition = mTrailersView.getChildLayoutPosition(v);
-                try{
+                try {
                     // Open the Youtube app if it's available
                     Intent intent = new Intent(Intent.ACTION_VIEW,
                             Uri.parse("vnd.youtube:" + trailers.get(itemPosition).getVideoPath()));
                     startActivity(intent);
-                }catch (ActivityNotFoundException ex){
+                } catch (ActivityNotFoundException ex) {
                     // Otherwise, just open the youtube link in the default browser
-                    Intent intent=new Intent(Intent.ACTION_VIEW,
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
                             Uri.parse(YOUTUBE_BASE_URL
                                     .concat(trailers.get(itemPosition).getVideoPath())));
                     startActivity(intent);

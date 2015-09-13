@@ -25,7 +25,7 @@ public class TmdbRestClient {
     // Further Terms of Use information can be found at
     //      https://www.themoviedb.org/documentation/api/terms-of-use
     // Replace your generated API key in TMDB_APIKEY below
-    public static final String TMDB_APIKEY = "b135eb044beeebb67df1a9b6ee3709cf";
+    public static final String TMDB_APIKEY = "";
 
     // API key words to be used for relative URL additions
     public static final String SORT_BY = "sort_by";
@@ -51,6 +51,7 @@ public class TmdbRestClient {
     /**
      * Set up request URL, GET parameters, and response handler
      * AND Execute the GET request
+     *
      * @param url             the URL to send the request to.
      * @param params          additional GET parameters to send with the request.
      * @param responseHandler the response handler instance that should handle the response.
@@ -61,9 +62,11 @@ public class TmdbRestClient {
     }
 
     // Right now POST is never used
+
     /**
      * Set up request URL, POST parameters, and response handler
      * AND Execute the GET request
+     *
      * @param url             the URL to send the request to.
      * @param params          additional POST parameters or files to send with the request.
      * @param responseHandler the response handler instance that should handle the response.
@@ -75,6 +78,7 @@ public class TmdbRestClient {
 
     /**
      * Set up the URL for GET/POST requests
+     *
      * @param relativeUrl URL path of API call (beyond the TMDB base URL)
      * @return complete URL of concatenated base URL and relative URL for the TMDB API call
      */

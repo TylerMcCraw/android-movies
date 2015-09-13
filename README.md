@@ -14,9 +14,14 @@ TheMovieDatabase API: https://www.themoviedb.org/documentation/api
 Android Icons: https://developer.android.com/training/implementing-navigation/nav-drawer.html
 Material Design Icons: https://materialdesignicons.com/
 
+Lots of help from these projects:
+Custom Loader class: https://github.com/alexjlockwood/AppListLoader
+Pre-cache views for RecyclerView: https://androiddevx.wordpress.com/2014/12/05/recycler-view-pre-cache-views/
+
 Libraries
 Picasso: http://square.github.io/picasso/
 AsyncHttpClient: http://loopj.com/android-async-http/
+Stetho: http://facebook.github.io/stetho/
 
 ## License
 

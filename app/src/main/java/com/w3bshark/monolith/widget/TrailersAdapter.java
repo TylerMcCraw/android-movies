@@ -14,12 +14,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.w3bshark.monolith.R;
-import com.w3bshark.monolith.model.Movie;
 import com.w3bshark.monolith.model.Trailer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Adapter for binding data to RecyclerView used in MainActivityFragment
@@ -62,8 +59,9 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
     /**
      * Bind trailer data to the view holder for RecyclerView and set the
      * click listener to each card view so that user can select an individual movie view
+     *
      * @param trailerViewHolder the view holder for binding data
-     * @param i the position of the view holder in the RecyclerView
+     * @param i                 the position of the view holder in the RecyclerView
      */
     @Override
     public void onBindViewHolder(TrailerViewHolder trailerViewHolder, int i) {
@@ -82,6 +80,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
 
     /**
      * Set the item count to the count of the trailers
+     *
      * @return the count of items in the Trailers RecyclerView
      */
     @Override

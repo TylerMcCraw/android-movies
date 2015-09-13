@@ -106,6 +106,14 @@
                     android:layout_below="@+id/detail_description_textview"
                     android:layout_marginTop="@dimen/detail_fragment_rv_margintop"
                     android:id="@+id/detail_rv_trailers" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:minHeight="200dp"
+                    android:layout_below="@+id/detail_rv_trailers"
+                    android:layout_marginTop="@dimen/detail_fragment_rv_margintop"
+                    android:id="@+id/detail_rv_reviews" />
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>

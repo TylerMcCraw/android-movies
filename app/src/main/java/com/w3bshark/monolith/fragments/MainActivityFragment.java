@@ -4,15 +4,20 @@
 
 package com.w3bshark.monolith.fragments;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +26,13 @@ import com.w3bshark.monolith.R;
 import com.w3bshark.monolith.Util;
 import com.w3bshark.monolith.activities.DetailActivity;
 import com.w3bshark.monolith.activities.MainActivity;
+import com.w3bshark.monolith.data.MovieContract.MovieEntry;
+import com.w3bshark.monolith.data.MovieLoader;
 import com.w3bshark.monolith.model.Movie;
 import com.w3bshark.monolith.rest.MoviesHandler;
 import com.w3bshark.monolith.rest.TmdbRestClient;
+import com.w3bshark.monolith.widget.MoviesAdapter;
 import com.w3bshark.monolith.widget.PreCachingGridLayoutManager;
-import com.w3bshark.monolith.widget.RecyclerAdapter;
 
 import org.apache.http.Header;
 import org.json.JSONObject;
@@ -36,12 +43,14 @@ import java.util.ArrayList;
  * A custom fragment for displaying a grid/list of movies
  * This fragment is created within MainActivity
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<Movie>> {
 
+    // Log tag to keep track of logs created against this class
+    private static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
     // Our recycler view used to display movies as card views
     private RecyclerView mRecyclerView;
     // Adapter used to bind movie data to our recycler view
-    private RecyclerAdapter mRecyclerAdapter;
+    private MoviesAdapter mMoviesAdapter;
     // Custom-built GridLayoutManager for pre-caching picasso fetching of movie poster images
     private PreCachingGridLayoutManager mLayoutManager;
     // Layout that allows users to swipe down the screen to refresh data anytime
@@ -63,6 +72,7 @@ public class MainActivityFragment extends Fragment {
     // Counter key for saving instance state
     private static final String VISIBLE_PAGES = "VISIBLE_PAGES";
 
+    private static final int MOVIES_LOADER = 0;
 
     public MainActivityFragment() {
     }
@@ -71,8 +81,9 @@ public class MainActivityFragment extends Fragment {
      * Handle creation of fragment view, fetch data via TmdbRestClient,
      * initialize our data adapter (RecylcerAdapter) and bind the data,
      * define our scroll listener, and bind the swipe refresh layout
-     * @param inflater used for inflating the xml layout
-     * @param container view to inflate the xml layout into
+     *
+     * @param inflater           used for inflating the xml layout
+     * @param container          view to inflate the xml layout into
      * @param savedInstanceState instance state of the application activity
      * @return main view displayed in the fragment
      */
@@ -97,16 +108,13 @@ public class MainActivityFragment extends Fragment {
             // Display only 1 columns if phone; 2 columns if tablet
             spanCount = isTablet ? 2 : 1;
             mLayoutManager = new PreCachingGridLayoutManager(getActivity(), spanCount, GridLayoutManager.HORIZONTAL, false);
-        }
-        else {
+        } else {
             // Display only 2 columns if phone; 3 columns if tablet
             spanCount = isTablet ? 3 : 2;
             mLayoutManager = new PreCachingGridLayoutManager(getActivity(), spanCount, GridLayoutManager.VERTICAL, false);
         }
         mLayoutManager.setExtraLayoutSpace(Util.getScreenHeight(getActivity()));
         mRecyclerView.setLayoutManager(mLayoutManager);
-        // Set up initial adapter (until we retrieve our data) so there is no skipping the layout
-        mRecyclerView.setAdapter(new RecyclerAdapter(getActivity(), new ArrayList<Movie>(), null));
 
         // Attempt to restore movie data from savedInstanceState
         if (savedInstanceState != null) {
@@ -115,107 +123,75 @@ public class MainActivityFragment extends Fragment {
             totalItemCount = savedInstanceState.getInt(TOTAL_ITEM_COUNT);
             visiblePages = savedInstanceState.getInt(VISIBLE_PAGES);
             movies = savedInstanceState.getParcelableArrayList(SAVED_MOVIES);
-            if (mRecyclerAdapter == null) {
+            if (mMoviesAdapter == null) {
                 initializeAdapter();
             } else {
-                mRecyclerAdapter.notifyDataSetChanged();
+                mMoviesAdapter.notifyDataSetChanged();
             }
         }
-        // If we couldn't retrieve movies from a saved instance state
-        if (movies == null || movies.size() == 0) {
-            // Find the user's preferred sort method and fetch the data in initializeData()
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-            String defValPref = "";
-            String userSortPref = settings.getString(MainActivity.PREF_SORT, defValPref);
-            if (userSortPref.isEmpty() || userSortPref.equals(MainActivity.SortType.MostPopular.getSortType())) {
-                initializeData(MainActivity.SortType.MostPopular);
-            } else {
-                initializeData(MainActivity.SortType.HighestRated);
-            }
 
-            // Initially we'll start with 1 page of movies (paging is a TMDB term)
-            // Then, we'll slowly roll in more and more pages as needed by user
-            // http://docs.themoviedb.apiary.io/#reference/discover/discovermovie
-            visiblePages = 1;
-        }
+        getLoaderManager().initLoader(MOVIES_LOADER, null, this);
 
         // Handle user continuously scrolling
         // Pages of new movies will be added in as user scrolls
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                visibleItemCount = mLayoutManager.getChildCount();
-                totalItemCount = mLayoutManager.getItemCount();
-                pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition();
-
-                if (viewIsLoading) {
-                    // We'll want to add in new movies before the user can hit a "wall"
-                    // This will allow users to continuously scroll without having to stop
-                    // and wait for the app to GET new movies
-                    if ((visibleItemCount + pastVisibleItems) >= (totalItemCount)) {
-                        viewIsLoading = false;
-
-                        String sortUrl;
-                        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-                        String defValPref = "";
-                        String userSortPref = settings.getString(MainActivity.PREF_SORT, defValPref);
-                        if (userSortPref.equals(MainActivity.SortType.HighestRated.getSortType())) {
-                            sortUrl = MoviesHandler.MOVIES_RATING_DESC;
-                        }
-                        else {
-                            sortUrl = MoviesHandler.MOVIES_POPULARITY_DESC;
-                        }
-                        String url = sortUrl
-                                .concat(MoviesHandler.MOVIES_ADDPAGE)
-                                .concat(Integer.toString(++visiblePages));
-                        TmdbRestClient.get(url, null, new MoviesHandler() {
-                                    @Override
-                                    //TODO: handle deprecation: org.apache.http.Header is deprecated in API level 22
-                                    // https://github.com/loopj/android-async-http/issues/833
-                                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                                        super.onSuccess(statusCode, headers, response);
-                                        if (this.parseMovies() != null && !this.parseMovies().isEmpty()) {
-                                            // It is required to call addAll because this causes the
-                                            // recycleradapter to realize that there is new data and to refresh the view
-                                            movies.addAll(this.parseMovies());
-                                        }
-                                        if (mRecyclerAdapter == null) {
-                                            initializeAdapter();
-                                        } else {
-                                            mRecyclerAdapter.notifyDataSetChanged();
-                                        }
-                                        mSwipeRefreshLayout.setRefreshing(false);
-
-                                        viewIsLoading = true;
-                                    }
-                                });
-                    }
-                    // TMDB has a limit on pages that can be requested
-                    // This limit is 1000, so we should stop the user from loading more than this
-                    if (visiblePages >= 1000) {
-                        viewIsLoading = false;
-                    }
-                }
-            }
-        });
+        // TODO: Add inifinite scrolling back in, when we can better support it
+//        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                visibleItemCount = mLayoutManager.getChildCount();
+//                totalItemCount = mLayoutManager.getItemCount();
+//                pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition();
+//
+//                if (viewIsLoading) {
+//                    // We'll want to add in new movies before the user can hit a "wall"
+//                    // This will allow users to continuously scroll without having to stop
+//                    // and wait for the app to GET new movies
+//                    if ((visibleItemCount + pastVisibleItems) >= (totalItemCount)) {
+//                        viewIsLoading = false;
+//
+//                        String sortUrl;
+//                        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+//                        String defValPref = "";
+//                        String userSortPref = settings.getString(MainActivity.PREF_SORT, defValPref);
+//                        if (userSortPref.equals(MainActivity.SortType.HighestRated.getSortType())) {
+//                            sortUrl = MoviesHandler.MOVIES_RATING_DESC;
+//                        }
+//                        else {
+//                            sortUrl = MoviesHandler.MOVIES_POPULARITY_DESC;
+//                        }
+//                        String url = sortUrl
+//                                .concat(MoviesHandler.MOVIES_ADDPAGE)
+//                                .concat(Integer.toString(++visiblePages));
+//                        getMovies(url, true, true);
+//                    }
+//                    // TMDB has a limit on pages that can be requested
+//                    // This limit is 1000, so we should stop the user from loading more than this
+//                    if (visiblePages >= 1000) {
+//                        viewIsLoading = false;
+//                    }
+//                }
+//            }
+//        });
 
         // Handle user pull-down to refresh
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.main_swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // Set visible pages back to 1, because we'll be reloading all pages
-                visiblePages = 1;
+//                // Set visible pages back to 1, because we'll be reloading all pages
+                // TODO: Add inifinite scrolling back in, when we can better support it
+//                visiblePages = 1;
                 SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
                 String defValPref = "";
                 String userSortPref = settings.getString(MainActivity.PREF_SORT, defValPref);
+                String getUrl;
                 if (userSortPref.equals(MainActivity.SortType.HighestRated.getSortType())) {
-                    initializeData(MainActivity.SortType.HighestRated);
+                    getUrl = MoviesHandler.MOVIES_RATING_DESC;
+                } else {
+                    getUrl = MoviesHandler.MOVIES_POPULARITY_DESC;
                 }
-                else {
-                    initializeData(MainActivity.SortType.MostPopular);
-                }
-                initializeAdapter();
+                getMovies(getUrl, false);
+//                initializeAdapter();
                 mRecyclerView.refreshDrawableState();
             }
         });
@@ -225,45 +201,39 @@ public class MainActivityFragment extends Fragment {
         return rootView;
     }
 
-    /**
-     * Fetch data from TMDB via our rest client, TmdbRestClient, based on
-     * passed sort type
-     * @param sort sort type based on SortType enum
-     */
-    private void initializeData(MainActivity.SortType sort) {
-        if (movies == null) {
-            movies = new ArrayList<>();
-        }
+    private void restartLoader() {
+        getLoaderManager().restartLoader(MOVIES_LOADER, null, this);
+    }
 
-        //TODO: Handle user press of cancel or close of application
-//        RequestHandle handle =
-
-        String getUrl;
-        if (sort == MainActivity.SortType.HighestRated) {
-            getUrl = MoviesHandler.MOVIES_RATING_DESC;
-        }
-        else {
-            getUrl = MoviesHandler.MOVIES_POPULARITY_DESC;
-        }
+    private void getMovies(String url, final Boolean setViewIsLoading) {
         // Fetch movie data using our rest client and bind the data
-        TmdbRestClient.get(getUrl, null, new MoviesHandler() {
+        TmdbRestClient.get(url, null, new MoviesHandler() {
+            @Override
             //TODO: handle deprecation: org.apache.http.Header is deprecated in API level 22
             // https://github.com/loopj/android-async-http/issues/833
-            @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 super.onSuccess(statusCode, headers, response);
-                if (this.parseMovies() != null && !this.parseMovies().isEmpty()) {
-                    movies.clear();
-                    // It is required to call addAll because this causes the
-                    // recycleradapter to realize that there is new data and to refresh the view
-                    movies.addAll(this.parseMovies());
+                int inserted = 0;
+                if (this.getMoviesVector() != null && !this.getMoviesVector().isEmpty()) {
+                    // Bulk insert fetched movies into DB
+                    ContentValues[] cvArray = new ContentValues[getMoviesVector().size()];
+                    getMoviesVector().toArray(cvArray);
+                    inserted = getContext().getContentResolver().bulkInsert(MovieEntry.CONTENT_URI, cvArray);
+
+                    Log.d(LOG_TAG, "MoviesHandler Complete. " + inserted + " Inserted");
                 }
-                if (mRecyclerAdapter == null) {
-                    initializeAdapter();
-                } else {
-                    mRecyclerAdapter.notifyDataSetChanged();
+
+                // Now that we've fetched the latest movies, let's reload the data for the UI
+                //  from our movies DB. If no new data was actually retrieved, don't attempt
+                //  to restart the loader, because we might fall into an infinite loop that way.
+                if (inserted > 0) {
+                    restartLoader();
                 }
                 mSwipeRefreshLayout.setRefreshing(false);
+
+                if (setViewIsLoading) {
+                    viewIsLoading = true;
+                }
             }
 
             //TODO: handle deprecation: org.apache.http.Header is deprecated in API level 22
@@ -274,13 +244,10 @@ public class MainActivityFragment extends Fragment {
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
-
-        //TODO: Handle user press of cancel or close of application
-//      handle.cancel(true);
     }
 
     /**
-     * Set up our RecyclerAdapter to bind the data to the RecyclerView and handle
+     * Set up our MoviesAdapter to bind the data to the RecyclerView and handle
      * user click of movie (CardView) in the RecyclerView
      */
     private void initializeAdapter() {
@@ -296,9 +263,9 @@ public class MainActivityFragment extends Fragment {
             }
         };
 
-        // Initialize the RecyclerAdapter and bind movies
-        mRecyclerAdapter = new RecyclerAdapter(getActivity(), movies, clickListener);
-        mRecyclerView.setAdapter(mRecyclerAdapter);
+        // Initialize the MoviesAdapter and bind movies
+        mMoviesAdapter = new MoviesAdapter(getActivity(), movies, clickListener);
+        mRecyclerView.setAdapter(mMoviesAdapter);
     }
 
     /**
@@ -308,11 +275,19 @@ public class MainActivityFragment extends Fragment {
         // Set the user shared preference to MostPopular
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         SharedPreferences.Editor preferenceEditor = settings.edit();
-        preferenceEditor.putString(MainActivity.PREF_SORT,MainActivity.SortType.MostPopular.getSortType());
+        preferenceEditor.putString(MainActivity.PREF_SORT, MainActivity.SortType.MostPopular.getSortType());
         preferenceEditor.apply();
 
-        // Fetch the movie data
-        initializeData(MainActivity.SortType.MostPopular);
+        // There's no reason to attempt to fetch data while offline, so if app does not
+        //  have connectivity, then just restart the loader so that it can sort the data from
+        //  storage in the correct manner
+        if (Util.isNetworkAvailable(getContext())) {
+            // Fetch the movie data
+            String getUrl = MoviesHandler.MOVIES_POPULARITY_DESC;
+            getMovies(getUrl, false);
+        } else {
+            restartLoader();
+        }
     }
 
     /**
@@ -322,11 +297,19 @@ public class MainActivityFragment extends Fragment {
         // Set the user shared preference to HighestRated
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         SharedPreferences.Editor preferenceEditor = settings.edit();
-        preferenceEditor.putString(MainActivity.PREF_SORT,MainActivity.SortType.HighestRated.getSortType());
+        preferenceEditor.putString(MainActivity.PREF_SORT, MainActivity.SortType.HighestRated.getSortType());
         preferenceEditor.apply();
 
-        // Fetch the movie data
-        initializeData(MainActivity.SortType.HighestRated);
+        // There's no reason to attempt to fetch data while offline, so if app does not
+        //  have connectivity, then just restart the loader so that it can sort the data from
+        //  storage in the correct manner
+        if (Util.isNetworkAvailable(getContext())) {
+            // Fetch the movie data
+            String getUrl = MoviesHandler.MOVIES_RATING_DESC;
+            getMovies(getUrl, false);
+        } else {
+            restartLoader();
+        }
     }
 
     @Override
@@ -339,5 +322,58 @@ public class MainActivityFragment extends Fragment {
         savedInstanceState.putInt(TOTAL_ITEM_COUNT, totalItemCount);
         savedInstanceState.putInt(VISIBLE_PAGES, visiblePages);
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public Loader<ArrayList<Movie>> onCreateLoader(int i, Bundle bundle) {
+        Uri moviesUri = MovieEntry.buildAllMoviesUri();
+        return new MovieLoader(getActivity(), moviesUri);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<ArrayList<Movie>> loader, ArrayList<Movie> data) {
+
+        // If there were no movies in the database, attempt to fetch them while online
+        if (data == null || data.size() == 0) {
+            // Initially we'll start with 1 page of movies (paging is a TMDB term)
+            // Then, we'll slowly roll in more and more pages as needed by user
+            // http://docs.themoviedb.apiary.io/#reference/discover/discovermovie
+            // TODO: Add inifinite scrolling back in, when we can better support it
+//            visiblePages = 1;
+            // Find the user's preferred sort method and fetch the data in initializeData()
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+            String defValPref = "";
+            String userSortPref = settings.getString(MainActivity.PREF_SORT, defValPref);
+            String getUrl;
+            if (userSortPref.equals(MainActivity.SortType.HighestRated.getSortType())) {
+                getUrl = MoviesHandler.MOVIES_RATING_DESC;
+            } else {
+                getUrl = MoviesHandler.MOVIES_POPULARITY_DESC;
+            }
+            getMovies(getUrl, false);
+
+            // Otherwise, add the movies from the database
+        } else {
+            if (movies == null) {
+                movies = new ArrayList<>();
+            }
+            movies.clear();
+            movies.addAll(data);
+            if (mMoviesAdapter == null) {
+                initializeAdapter();
+            } else {
+                mMoviesAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<ArrayList<Movie>> loader) {
+        if (movies != null) {
+            this.movies.clear();
+        }
+        if (mMoviesAdapter != null) {
+            mMoviesAdapter.notifyDataSetChanged();
+        }
     }
 }
