@@ -341,6 +341,16 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         }
     }
 
+    public void showFavorites() {
+        // Set the user shared preference to Favorites
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        SharedPreferences.Editor preferenceEditor = settings.edit();
+        preferenceEditor.putString(MainActivity.PREF_SORT, MainActivity.SortType.Favorites.getSortType());
+        preferenceEditor.apply();
+
+        restartLoader();
+    }
+
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         if (movies != null) {
@@ -362,17 +372,21 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onLoadFinished(Loader<ArrayList<Movie>> loader, ArrayList<Movie> data) {
 
-        // If there were no movies in the database, attempt to fetch them while online
-        if (data == null || data.size() == 0) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        String defValPref = "";
+        String userSortPref = settings.getString(MainActivity.PREF_SORT, defValPref);
+
+        // If there were no movies in the database  and the sort preference
+        //   is not "Favorites", attempt to fetch them while online
+        //   We don't need to fetch movie data if we're showing favorites
+        if ((data == null || data.size() == 0)
+                && !userSortPref.equals(MainActivity.SortType.Favorites.getSortType())) {
             // Initially we'll start with 1 page of movies (paging is a TMDB term)
             // Then, we'll slowly roll in more and more pages as needed by user
             // http://docs.themoviedb.apiary.io/#reference/discover/discovermovie
             // TODO: Add inifinite scrolling back in, when we can better support it
 //            visiblePages = 1;
             // Find the user's preferred sort method and fetch the data in initializeData()
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-            String defValPref = "";
-            String userSortPref = settings.getString(MainActivity.PREF_SORT, defValPref);
             String getUrl;
             if (userSortPref.equals(MainActivity.SortType.HighestRated.getSortType())) {
                 getUrl = MoviesHandler.MOVIES_RATING_DESC;
@@ -382,7 +396,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             getMovies(getUrl, false);
 
             // Otherwise, add the movies from the database
-        } else {
+        } else if (data != null) {
             if (movies == null) {
                 movies = new ArrayList<>();
             }

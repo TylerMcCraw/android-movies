@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Enum for keeping track of available sorts
     public enum SortType {
-        MostPopular("MP"), HighestRated("HR");
+        MostPopular("MP"), HighestRated("HR"), Favorites("FAV");
         private String sortType;
 
         SortType(String s) {
@@ -175,6 +175,14 @@ public class MainActivity extends AppCompatActivity {
                 fragment.sortByHighestRated();
                 break;
             case 2:
+                // This is the Show "Favorites" option
+                // Highlight the selected item
+                mDrawerList.setItemChecked(position, true);
+                selectedSort = position;
+                fragment = (MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.container);
+                fragment.showFavorites();
+                break;
+            case 3:
                 // This is the Settings option
                 mDrawerList.setItemChecked(position, false);
                 mDrawerList.setItemChecked(selectedSort, true);

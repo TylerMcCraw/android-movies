@@ -64,10 +64,45 @@ public class MovieLoader extends AsyncTaskLoader<ArrayList<Movie>> {
     @Override
     public ArrayList<Movie> loadInBackground() {
 
+        if (mMovies == null) {
+            mMovies = new ArrayList<>();
+        }
+        ArrayList<Movie> entries = new ArrayList<>(mMovies.size());
+
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
         String defValPref = "";
         String userSortPref = settings.getString(MainActivity.PREF_SORT, defValPref);
         String sortOrder;
+
+        // We'll handle Favorites a little differently
+        if (userSortPref.equals(MainActivity.SortType.Favorites.getSortType())) {
+            Cursor cursor = getContext().getContentResolver().query(
+                    MovieEntry.CONTENT_URI, MOVIES_COLUMNS,
+                    MovieEntry.COLUMN_FAVORITE + " IS NOT NULL AND " + MovieEntry.COLUMN_FAVORITE + " != '' ",
+                    null,
+                    MovieEntry.COLUMN_FAVORITE + " DESC");
+
+            if (cursor.moveToFirst()) {
+                do {
+                    Movie m = new Movie();
+                    m.setMovieId(cursor.getString(COL_MOVIE_ID));
+                    m.setTitle(cursor.getString(COL_MOVIE_TITLE));
+                    m.setDescription(cursor.getString(COL_MOVIE_DESCR));
+                    m.setImageCode(cursor.getString(COL_MOVIE_IMAGE_CODE));
+                    m.setReleaseDate(cursor.getString(COL_MOVIE_RELEASE_DATE));
+                    m.setPopularity(cursor.getLong(COL_MOVIE_POPULARITY));
+                    m.setVoteAverage(cursor.getDouble(COL_MOVIE_VOTE_AVG));
+                    m.setFavorite(cursor.getString(COL_MOVIE_FAVORITE));
+                    mMovies.add(m);
+                    entries.add(m);
+                }
+                while (cursor.moveToNext());
+            }
+
+            cursor.close();
+            return entries;
+        }
+
         if (userSortPref.equals(MainActivity.SortType.HighestRated.getSortType())) {
             sortOrder = MovieEntry.COLUMN_VOTE_AVG + " DESC";
         } else {
@@ -77,11 +112,6 @@ public class MovieLoader extends AsyncTaskLoader<ArrayList<Movie>> {
         Cursor cursor = getContext().getContentResolver().query(
                 MovieEntry.CONTENT_URI, MOVIES_COLUMNS, null, null, sortOrder);
 
-        if (mMovies == null) {
-            mMovies = new ArrayList<>();
-        }
-
-        ArrayList<Movie> entries = new ArrayList<>(mMovies.size());
         if (cursor.moveToFirst()) {
             do {
                 Movie m = new Movie();

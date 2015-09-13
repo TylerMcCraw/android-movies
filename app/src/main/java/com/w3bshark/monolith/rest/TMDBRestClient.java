@@ -25,7 +25,7 @@ public class TmdbRestClient {
     // Further Terms of Use information can be found at
     //      https://www.themoviedb.org/documentation/api/terms-of-use
     // Replace your generated API key in TMDB_APIKEY below
-    public static final String TMDB_APIKEY = "";
+    public static final String TMDB_APIKEY = "b135eb044beeebb67df1a9b6ee3709cf";
 
     // API key words to be used for relative URL additions
     public static final String SORT_BY = "sort_by";
