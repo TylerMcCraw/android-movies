@@ -23,7 +23,7 @@ public class TrailersHandler extends JsonHttpResponseHandler {
     // This resolves to the relative URL below to retrieve trailer videos for a specific movie
     // movie/<MOVIE ID GOES HERE>/videos"
     public static final String TRAILERS =
-            TmdbRestClient.DISCOVER_MOVIE.concat("/");
+            TmdbAPIRestClient.DISCOVER_MOVIE.concat("/");
     private ArrayList<Trailer> trailers;
     private String errorMessage;
 
@@ -93,8 +93,8 @@ public class TrailersHandler extends JsonHttpResponseHandler {
 
     public static String buildUrl(String movieId) {
         return TRAILERS.concat(movieId)
-                .concat("/").concat(TmdbRestClient.VIDEOS)
+                .concat("/").concat(TmdbAPIRestClient.VIDEOS)
                 .concat("?")
-                .concat(TmdbRestClient.API_KEY).concat("=").concat(TmdbRestClient.TMDB_APIKEY);
+                .concat(TmdbAPIRestClient.API_KEY).concat("=").concat(TmdbAPIRestClient.TMDB_APIKEY);
     }
 }

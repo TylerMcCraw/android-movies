@@ -25,7 +25,7 @@ import com.w3bshark.monolith.R;
 import com.w3bshark.monolith.activities.DetailActivity;
 import com.w3bshark.monolith.model.Movie;
 import com.w3bshark.monolith.model.Trailer;
-import com.w3bshark.monolith.rest.TmdbRestClient;
+import com.w3bshark.monolith.rest.TmdbAPIRestClient;
 import com.w3bshark.monolith.rest.TrailersHandler;
 import com.w3bshark.monolith.widget.TrailersAdapter;
 
@@ -243,7 +243,7 @@ public class DetailActivityFragment extends Fragment {
         String getUrl = TrailersHandler.buildUrl(movieId);
 
         // Fetch trailer data using our rest client and bind the data
-        TmdbRestClient.get(getUrl, null, new TrailersHandler() {
+        TmdbAPIRestClient.get(getUrl, null, new TrailersHandler() {
             //TODO: handle deprecation: org.apache.http.Header is deprecated in API level 22
             // https://github.com/loopj/android-async-http/issues/833
             @Override

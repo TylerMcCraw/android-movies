@@ -14,7 +14,7 @@ import com.loopj.android.http.RequestParams;
  * specifically for calls to the open TMDB API
  * See <a href="https://www.themoviedb.org/documentation/api"> TMDB API </a>
  */
-public class TmdbRestClient {
+public class TmdbAPIRestClient {
 
     // Base URL for all GET/POST calls
     private static final String BASE_URL = "http://api.themoviedb.org/3/";
