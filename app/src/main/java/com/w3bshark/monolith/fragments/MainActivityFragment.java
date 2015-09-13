@@ -31,7 +31,7 @@ import com.w3bshark.monolith.data.MovieContract.MovieEntry;
 import com.w3bshark.monolith.data.MovieLoader;
 import com.w3bshark.monolith.model.Movie;
 import com.w3bshark.monolith.rest.MoviesHandler;
-import com.w3bshark.monolith.rest.TmdbAPIRestClient;
+import com.w3bshark.monolith.rest.TmdbRestClient;
 import com.w3bshark.monolith.widget.MoviesAdapter;
 import com.w3bshark.monolith.widget.PreCachingGridLayoutManager;
 
@@ -79,7 +79,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     }
 
     /**
-     * Handle creation of fragment view, fetch data via TmdbAPIRestClient,
+     * Handle creation of fragment view, fetch data via TmdbRestClient,
      * initialize our data adapter (RecylcerAdapter) and bind the data,
      * define our scroll listener, and bind the swipe refresh layout
      *
@@ -208,7 +208,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     private void getMovies(String url, final Boolean setViewIsLoading) {
         // Fetch movie data using our rest client and bind the data
-        TmdbAPIRestClient.get(url, null, new MoviesHandler() {
+        TmdbRestClient.get(url, null, new MoviesHandler() {
             @Override
             //TODO: handle deprecation: org.apache.http.Header is deprecated in API level 22
             // https://github.com/loopj/android-async-http/issues/833
