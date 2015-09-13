@@ -227,9 +227,13 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 // Now that we've fetched the latest movies, let's reload the data for the UI
                 //  from our movies DB. If no new data was actually retrieved, don't attempt
                 //  to restart the loader, because we might fall into an infinite loop that way.
-                if (inserted > 0) {
-                    restartLoader();
-                }
+//                if (inserted > 0)
+                // Temporarily removed this check
+                // if we don't remove this check, then views don't update with results, since our
+                // provider class's bulkinsert ignores conflict inserts with CONFLICT_IGNORE
+                //TODO: Check to make sure there are no infinite loops by not checking inserted > 0
+                restartLoader();
+
                 mSwipeRefreshLayout.setRefreshing(false);
 
                 if (setViewIsLoading) {

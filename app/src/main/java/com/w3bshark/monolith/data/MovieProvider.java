@@ -101,7 +101,7 @@ public class MovieProvider extends ContentProvider {
                 // We're going to set the conflict algorithm here to CONFLICT_IGNORE
                 // so that we don't overwrite the user's favorites that they've stored
                 // TODO: move favorites away from movie table into its own table
-                long _id = db.insertWithOnConflict(MovieEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+                long _id = db.insertWithOnConflict(MovieEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
                 if (_id > 0)
                     returnUri = MovieEntry.buildMovieUri(_id);
                 else
@@ -191,7 +191,7 @@ public class MovieProvider extends ContentProvider {
                         // We're going to set the conflict algorithm here to CONFLICT_IGNORE
                         // so that we don't overwrite the user's favorites that they've stored
                         // TODO: move favorites away from movie table into its own table
-                        long _id = db.insertWithOnConflict(MovieEntry.TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+                        long _id = db.insertWithOnConflict(MovieEntry.TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_IGNORE);
                         if (_id != -1) {
                             returnCount++;
                         }
