@@ -16,8 +16,8 @@ android {
         applicationId "com.w3bshark.monolith"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 3
-        versionName "1.2"
+        versionCode 4
+        versionName "2.0"
     }
     buildTypes {
         release {
@@ -37,6 +37,6 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.loopj.android:android-async-http:1.4.8'
 
-    // TODO: Comment this out when releasing the app
-    compile 'com.facebook.stetho:stetho-okhttp:1.2.0'
+    //TODO: Comment this out when releasing the app
+//    compile 'com.facebook.stetho:stetho-okhttp:1.2.0'
 }

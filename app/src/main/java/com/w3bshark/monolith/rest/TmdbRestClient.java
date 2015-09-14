@@ -42,6 +42,9 @@ public class TmdbRestClient {
     //TODO: Future enhancement? - add ability to view TV shows too?
 //    public static final String DISCOVER_TV = "tv";
 
+    //TODO: Future enhancement? - add option to discover newer movies (yet to be released)
+//    /discover/movie?primary_release_date.gte=2015-09-13&primary_release_date.lte=2014-10-22
+
     /*
         Android Asynchronous Http Client developed by James Smith
         See <a href="http://loopj.com/android-async-http/">

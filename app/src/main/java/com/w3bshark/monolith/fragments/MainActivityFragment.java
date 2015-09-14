@@ -13,6 +13,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -62,6 +64,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     private int pastVisibleItems, visibleItemCount, totalItemCount, visiblePages;
     // Ever-growing list of movies displayed (binded from our adapter)
     private ArrayList<Movie> movies;
+    // If we're in a Master-Detail view
+    private Boolean mTwoPanes;
     // Movie parcelable key for saving instance state
     private static final String SAVED_MOVIES = "SAVED_MOVIES";
     // Counter key for saving instance state
@@ -93,6 +97,11 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
+        Bundle args = getArguments();
+        if (args != null && args.containsKey(MainActivity.BUNDLE_TWO_PANE)) {
+            mTwoPanes = args.getBoolean(MainActivity.BUNDLE_TWO_PANE);
+        }
+
         // Set up the xml layout
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rv);
@@ -107,11 +116,12 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         int spanCount;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             // Display only 1 columns if phone; 2 columns if tablet
-            spanCount = isTablet ? 2 : 1;
-            mLayoutManager = new PreCachingGridLayoutManager(getActivity(), spanCount, GridLayoutManager.HORIZONTAL, false);
+            spanCount = isTablet ? 3 : 1;
+            int orientation = isTablet ? GridLayoutManager.VERTICAL : GridLayoutManager.HORIZONTAL;
+            mLayoutManager = new PreCachingGridLayoutManager(getActivity(), spanCount, orientation, false);
         } else {
-            // Display only 2 columns if phone; 3 columns if tablet
-            spanCount = isTablet ? 3 : 2;
+            // Display only 2 columns if phone; 2 columns if tablet
+            spanCount = 2;
             mLayoutManager = new PreCachingGridLayoutManager(getActivity(), spanCount, GridLayoutManager.VERTICAL, false);
         }
         mLayoutManager.setExtraLayoutSpace(Util.getScreenHeight(getActivity()));
@@ -290,9 +300,23 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 if (selectedMovie == null) {
                     selectedMovie = movies.get(itemPosition);
                 }
-                Intent detailIntent = new Intent(getActivity(), DetailActivity.class)
+                if (mTwoPanes) {
+                    FragmentManager manager = getActivity().getSupportFragmentManager();
+//                    DetailActivityFragment oldDetailActFrag = (DetailActivityFragment)manager.findFragmentByTag(MainActivity.DETAILFRAGMENT_TAG);
+                    DetailActivityFragment newDetailActFrag = new DetailActivityFragment();
+                    final Bundle bundle = new Bundle();
+                    bundle.putParcelable(DetailActivityFragment.BUNDLE_SELECTED_MOVIE, selectedMovie);
+                    bundle.putBoolean(MainActivity.BUNDLE_TWO_PANE, mTwoPanes);
+                    newDetailActFrag.setArguments(bundle);
+                    manager.beginTransaction().replace(R.id.detail_container, newDetailActFrag)
+//                            .detach(oldDetailActFrag)
+//                            .attach(newDetailActFrag)
+                            .commit();
+                } else {
+                    Intent detailIntent = new Intent(getActivity(), DetailActivity.class)
                         .putExtra(DetailActivity.EXTRASCURRENTMOVIE, selectedMovie);
-                startActivity(detailIntent);
+                    startActivity(detailIntent);
+                }
             }
         };
 
