@@ -142,17 +142,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             mTwoPane = false;
         }
-
-        if (savedInstanceState == null) {
-            MainActivityFragment mainActFrag = new MainActivityFragment();
-            final Bundle bundle = new Bundle();
-            bundle.putBoolean(BUNDLE_TWO_PANE, mTwoPane);
-            mainActFrag.setArguments(bundle);
-
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.main_container, mainActFrag)
-                    .commit();
-        }
     }
 
     @Override
@@ -160,15 +149,6 @@ public class MainActivity extends AppCompatActivity {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
         mDrawerToggle.syncState();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        DetailActivityFragment df = (DetailActivityFragment)getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
-        if ( null != df ) {
-//            df.onMovieChanged(location);
-        }
     }
 
     @Override
@@ -342,5 +322,9 @@ public class MainActivity extends AppCompatActivity {
         if (mShareActionProvider != null) {
             mShareActionProvider.setShareIntent(shareIntent);
         }
+    }
+
+    public Boolean getIsTwoPanes() {
+        return mTwoPane;
     }
 }

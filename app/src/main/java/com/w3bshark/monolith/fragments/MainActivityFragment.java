@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -97,11 +96,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
-        Bundle args = getArguments();
-        if (args != null && args.containsKey(MainActivity.BUNDLE_TWO_PANE)) {
-            mTwoPanes = args.getBoolean(MainActivity.BUNDLE_TWO_PANE);
-        }
 
         // Set up the xml layout
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
@@ -300,6 +294,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 //  then, just use the movie from in-memory
                 if (selectedMovie == null) {
                     selectedMovie = movies.get(itemPosition);
+                }
+                MainActivity mainAct = (MainActivity) getActivity();
+                if (mainAct.getIsTwoPanes() != null) {
+                    mTwoPanes = mainAct.getIsTwoPanes();
                 }
                 if (mTwoPanes) {
                     FragmentManager manager = getActivity().getSupportFragmentManager();

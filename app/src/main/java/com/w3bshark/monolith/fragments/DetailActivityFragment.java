@@ -29,9 +29,9 @@ import com.w3bshark.monolith.model.Trailer;
 import com.w3bshark.monolith.rest.ReviewsHandler;
 import com.w3bshark.monolith.rest.TmdbRestClient;
 import com.w3bshark.monolith.rest.TrailersHandler;
+import com.w3bshark.monolith.widget.LinearLayoutManager;
 import com.w3bshark.monolith.widget.ReviewsAdapter;
 import com.w3bshark.monolith.widget.TrailersAdapter;
-import com.w3bshark.monolith.widget.LinearLayoutManager;
 
 import org.apache.http.Header;
 import org.json.JSONObject;
@@ -186,76 +186,6 @@ public class DetailActivityFragment extends Fragment {
 
         return detailFragment;
     }
-
-//    public View setUpDetailFrag() {
-//        View detailFragment = inflater.inflate(R.layout.fragment_detail, container, false);
-//        if (getActivity().getIntent() == null) {
-//            String snackMessage;
-//            snackMessage = getActivity().getApplicationContext().getString(R.string.error_unexpected);
-//            Snackbar.make(this.getView(), snackMessage, Snackbar.LENGTH_SHORT).show();
-//            // Otherwise, load the movie data into each corresponding fragment view
-//        } else {
-//            if (selectedMovie == null) {
-//                selectedMovie = getActivity().getIntent().getParcelableExtra(DetailActivity.EXTRASCURRENTMOVIE);
-//            }
-//            // if, for whatever reason, the selectedMovie is still null, get out of here!
-//            if (selectedMovie == null) {
-//                return detailFragment;
-//            }
-//
-//            setUpTrailersView(detailFragment, inflater, container);
-//            retrieveTrailerData(selectedMovie.getMovieId());
-//
-//            setUpReviewsView(detailFragment, inflater, container);
-//            retrieveReviewsData(selectedMovie.getMovieId());
-//
-//            // Title
-//            TextView titleView = (TextView) detailFragment.findViewById(R.id.detail_movie_title);
-//            titleView.setText(selectedMovie.getTitle());
-//
-//            // Poster
-//            ImageView image = (ImageView) detailFragment.findViewById(R.id.detail_poster);
-//            // Fetch the poster for the movie using Picasso
-//            String imgURL = BASE_IMG_URL;
-//            boolean isTablet = getResources().getBoolean(R.bool.isTablet);
-//            if (isTablet) {
-//                imgURL = imgURL.concat(IMG_HIGH_RES);
-//            } else {
-//                imgURL = imgURL.concat(IMG_MED_RES);
-//            }
-//            Picasso.with(getActivity().getApplicationContext()).load(imgURL.concat(selectedMovie.getImageCode())).into(image);
-//
-//            // Rating
-//            TextView ratingView = (TextView) detailFragment.findViewById(R.id.detail_rating_textview);
-//            if (selectedMovie.getVoteAverage() != null) {
-//                ratingView.setText(new DecimalFormat("#.##").format(selectedMovie.getVoteAverage()));
-//            }
-//            // "Out of" Rating
-//            TextView ratingTotalView = (TextView) detailFragment.findViewById(R.id.detail_rating_total_textview);
-//            ratingTotalView.setText("/10");
-//
-//            // Release Date
-//            TextView releaseDateView = (TextView) detailFragment.findViewById(R.id.detail_release_date_textview);
-//            DateFormat tmdbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-//            DateFormat displayFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault());
-//            Date convertedDate = new Date();
-//            try {
-//                convertedDate = tmdbFormat.parse(selectedMovie.getReleaseDate());
-//            } catch (ParseException e) {
-//                // If we couldn't parse the date for whatever reason, log it.
-//                Log.e(LOG_TAG, e.getMessage());
-//            }
-//            String convertedDateStr = displayFormat.format(convertedDate);
-//            releaseDateView.setText(convertedDateStr);
-//
-//            // Description
-//            TextView descriptionView = (TextView) detailFragment.findViewById(R.id.detail_description_textview);
-//            if (selectedMovie.getDescription() != null && !selectedMovie.getDescription().equals("null")) {
-//                descriptionView.setText(selectedMovie.getDescription());
-//            }
-//        }
-//        return detailFragment;
-//    }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
