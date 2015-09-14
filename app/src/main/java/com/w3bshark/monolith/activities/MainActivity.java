@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private ShareActionProvider mShareActionProvider;
 
     // Handle Master-Detail view
+    public static final String MAINFRAGMENT_TAG = "MFTAG";
     public static final String DETAILFRAGMENT_TAG = "DFTAG";
     private boolean mTwoPane;
     public static final String BUNDLE_TWO_PANE = "BUNDLE_TWO_PANE";
@@ -272,30 +273,22 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
-        //TODO: Set up shareprovider for main activity when we're in a master-detail view
         // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_detail, menu);
+        if (mTwoPane) {
+            getMenuInflater().inflate(R.menu.menu_main, menu);
 
-//        Movie selectedMovie = getIntent().getParcelableExtra(DetailActivity.EXTRASCURRENTMOVIE);
-//        if (selectedMovie.getFavorite() != null && !selectedMovie.getFavorite().isEmpty()) {
-//            //Locate MenuItem for Favorite/Bookmark button
-//            MenuItem favItem = menu.findItem(R.id.menu_item_bookmark);
-//            favItem.setIcon(R.drawable.bookmark_plus);
-//            favItem.setChecked(true);
-//        }
+            // Locate MenuItem with ShareActionProvider
+            MenuItem shareItem = menu.findItem(R.id.menu_item_share);
+            // Fetch and store ShareActionProvider
+            mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
 
-//        // Locate MenuItem with ShareActionProvider
-//        MenuItem shareItem = menu.findItem(R.id.menu_item_share);
-//        // Fetch and store ShareActionProvider
-//        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
-
-//        if (mShareActionProvider != null) {
-//            mShareActionProvider.setShareIntent(getDefaultShareIntent());
-//        } else {
-//            Log.d(LOG_TAG, "ShareActionProvider is null");
-//            return false;
-//        }
+            if (mShareActionProvider != null) {
+                mShareActionProvider.setShareIntent(getDefaultShareIntent());
+            } else {
+                Log.d(LOG_TAG, "ShareActionProvider is null");
+                return false;
+            }
+        }
         return true;
     }
 
@@ -306,32 +299,37 @@ public class MainActivity extends AppCompatActivity {
      * @return the share intent
      */
     private Intent getDefaultShareIntent() {
-        //TODO: Set up shareprovider for main activity when we're in a master-detail view
         Intent intent = new Intent(Intent.ACTION_SEND);
-//        intent.setType("text/plain");
-//        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
-//        // FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET was deprecated as of API 21
-//        // This intent flag is important so that the activity is cleared from recent tasks
-//        //  whenever the activity is finished/closed
-//        if (currentapiVersion >= Build.VERSION_CODES.LOLLIPOP) {
-//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-//        } else {
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-//        }
-//        Movie selectedMovie = getIntent().getParcelableExtra(DetailActivity.EXTRASCURRENTMOVIE);
-//        if (selectedMovie != null) {
-//            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.detail_share_subject).concat(" ")
-//                    .concat(selectedMovie.getTitle()));
-//
-//            // Build text for share provider
-//            String sharedText = selectedMovie.getTitle()
-//                    .concat(" - ")
-//                    .concat(selectedMovie.getDescription())
-//                    .concat(" ")
-//                    .concat(getString(R.string.detail_share_hashtag));
-//
-//            intent.putExtra(Intent.EXTRA_TEXT, sharedText);
-//        }
+        intent.setType("text/plain");
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+        // FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET was deprecated as of API 21
+        // This intent flag is important so that the activity is cleared from recent tasks
+        //  whenever the activity is finished/closed
+        if (currentapiVersion >= Build.VERSION_CODES.LOLLIPOP) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        } else {
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        }
+
+        Movie selectedMovie = null;
+        MainActivityFragment mainActivityFragment =
+                (MainActivityFragment)getSupportFragmentManager().findFragmentByTag(MainActivity.MAINFRAGMENT_TAG);
+        if (mainActivityFragment != null) {
+            selectedMovie = mainActivityFragment.getSelectedMovie();
+        }
+        if (selectedMovie != null) {
+            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.detail_share_subject).concat(" ")
+                    .concat(selectedMovie.getTitle()));
+
+            // Build text for share provider
+            String sharedText = selectedMovie.getTitle()
+                    .concat(" - ")
+                    .concat(selectedMovie.getDescription())
+                    .concat(" ")
+                    .concat(getString(R.string.detail_share_hashtag));
+
+            intent.putExtra(Intent.EXTRA_TEXT, sharedText);
+        }
         return intent;
     }
 

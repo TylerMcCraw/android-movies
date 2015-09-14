@@ -66,6 +66,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     private ArrayList<Movie> movies;
     // If we're in a Master-Detail view
     private Boolean mTwoPanes;
+    private Movie mSelectedMovie;
     // Movie parcelable key for saving instance state
     private static final String SAVED_MOVIES = "SAVED_MOVIES";
     // Counter key for saving instance state
@@ -302,21 +303,19 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 }
                 if (mTwoPanes) {
                     FragmentManager manager = getActivity().getSupportFragmentManager();
-//                    DetailActivityFragment oldDetailActFrag = (DetailActivityFragment)manager.findFragmentByTag(MainActivity.DETAILFRAGMENT_TAG);
                     DetailActivityFragment newDetailActFrag = new DetailActivityFragment();
                     final Bundle bundle = new Bundle();
                     bundle.putParcelable(DetailActivityFragment.BUNDLE_SELECTED_MOVIE, selectedMovie);
                     bundle.putBoolean(MainActivity.BUNDLE_TWO_PANE, mTwoPanes);
                     newDetailActFrag.setArguments(bundle);
                     manager.beginTransaction().replace(R.id.detail_container, newDetailActFrag)
-//                            .detach(oldDetailActFrag)
-//                            .attach(newDetailActFrag)
                             .commit();
                 } else {
                     Intent detailIntent = new Intent(getActivity(), DetailActivity.class)
                         .putExtra(DetailActivity.EXTRASCURRENTMOVIE, selectedMovie);
                     startActivity(detailIntent);
                 }
+                mSelectedMovie = selectedMovie;
             }
         };
 
@@ -446,5 +445,9 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         if (mMoviesAdapter != null) {
             mMoviesAdapter.notifyDataSetChanged();
         }
+    }
+
+    public Movie getSelectedMovie() {
+        return mSelectedMovie;
     }
 }
