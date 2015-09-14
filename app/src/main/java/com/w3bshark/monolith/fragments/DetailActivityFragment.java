@@ -289,7 +289,7 @@ public class DetailActivityFragment extends Fragment {
                     bundle.putParcelableArrayList(Movie.MOVIE_TRAILERS, trailers);
                     selectedMovie.setTrailers(bundle);
                     if (trailers != null && trailers.size() >= 0) {
-                        if(mTwoPanes) {
+                        if(mTwoPanes != null && mTwoPanes) {
                             MainActivity activity = (MainActivity) getActivity();
                             activity.setShareIntent(getShareIntentForActivity(trailers.get(0).getVideoPath()));
                         } else {
